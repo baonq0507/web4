@@ -1,0 +1,36 @@
+/* Custom styles */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Animation for hover effects */
+.hover-scale {
+    transition: transform 0.3s ease;
+}
+
+.hover-scale:hover {
+    transform: scale(1.05);
+}
+
+/* Custom button styles */
+.btn-primary {
+    @apply bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-300;
+}
+
+/* Custom card styles */
+.card {
+    @apply bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300;
+}
+
+/* Responsive menu */
+@media (max-width: 768px) {
+    .mobile-menu {
+        display: none;
+    }
+    
+    .mobile-menu.active {
+        display: block;
+    }
+} 

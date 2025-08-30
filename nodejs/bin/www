@@ -1,0 +1,336 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+require('dotenv').config();
+var app = require('../app');
+var debug = require('debug')('nodejs:server');
+var http = require('http');
+const WebSocket = require('ws');
+const db = require('../database/mysql2');
+let binanceWs = {};
+const url = require('url');
+const cron = require('node-cron');
+/*
+ * Get port from environment and store in Express.
+ */
+
+var port = normalizePort(process.env.WEBSOCKET_PORT || '8386');
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+
+var server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+const clients = new Map();
+
+function addToMap(map, key, value) {
+  if (!map.has(key)) {
+    map.set(key, []);
+  }
+  map.get(key).push(value);
+}
+
+// Hàm tạo kết nối Binance WebSocket
+const createBinanceConnection = (symbols, ws, query) => {
+  const binanceWs = new WebSocket('wss://stream.binance.com:9443/ws');
+  let binanceDepthWs = null;
+
+  // Only create depth WebSocket if depth10=true
+  if (query.depth === 'true') {
+    binanceDepthWs = new WebSocket('wss://stream.binance.com:9443/ws');
+  }
+
+  const setupBinanceWs = (ws) => {
+    ws.on('open', () => {
+      const subscribeMsg = {
+        method: 'SUBSCRIBE',
+        params: Array.isArray(symbols) ? symbols.map(symbol => symbol.toLowerCase() + '@ticker') : symbols.toLowerCase() + '@ticker',
+        id: 1
+      };
+      ws.send(JSON.stringify(subscribeMsg));
+    });
+
+    ws.on('close', () => {
+      console.log('Binance WebSocket đóng, đang kết nối lại...');
+      setTimeout(() => {
+        setupBinanceWs(new WebSocket('wss://stream.binance.com:9443/ws'));
+      }, 5000); // Đợi 5 giây trước khi kết nối lại
+    });
+
+    ws.on('error', (error) => {
+      console.error('Binance WebSocket error:', error);
+      ws.close();
+    });
+
+    return ws;
+  };
+
+  const setupBinanceDepthWs = (ws) => {
+    if (!ws) return null;
+
+    ws.on('open', () => {
+      const subscribeMsg = {
+        method: 'SUBSCRIBE',
+        params: Array.isArray(symbols) ? symbols.map(symbol => symbol.toLowerCase() + '@depth') : symbols.toLowerCase() + '@depth',
+        id: 2
+      };
+      ws.send(JSON.stringify(subscribeMsg));
+    });
+
+    ws.on('close', () => {
+      // setTimeout(() => {
+      //   setupBinanceDepthWs(new WebSocket('wss://stream.binance.com:9443/ws'));
+      // }, 5000);
+    });
+
+    ws.on('error', (error) => {
+      console.error('Binance Depth WebSocket error:', error);
+      ws.close();
+    });
+
+    return ws;
+  };
+
+  const binanceWsSetup = setupBinanceWs(binanceWs);
+  const binanceDepthWsSetup = setupBinanceDepthWs(binanceDepthWs);
+
+  return { binanceWs: binanceWsSetup, binanceDepthWs: binanceDepthWsSetup };
+};
+
+wss.on('connection', async (ws, req) => {
+  const query = url.parse(req.url, true).query;
+  let binanceConnections = null;
+
+  // Handle Binance WebSocket connections
+  if (query.symbols) {
+    const symbols = JSON.parse(query.symbols);
+    binanceConnections = createBinanceConnection(symbols, ws, query);
+    const { binanceWs, binanceDepthWs } = binanceConnections;
+
+    binanceWs.on('message', (data) => {
+      const parsedData = JSON.parse(data);
+      
+      if (parsedData.s) {
+        const symbol = parsedData.s;
+        const price = parseFloat(parsedData.c);
+        const priceChange = parseFloat(parsedData.P);
+        const volume = parseFloat(parsedData.v);
+        const high = parseFloat(parsedData.h);
+        const low = parseFloat(parsedData.l);
+        const volumeUsdt = parseFloat(parsedData.q);
+        ws.send(JSON.stringify({
+          type: 'marketData',
+          symbol: symbol,
+          data: JSON.parse(data),
+          data1: {
+            price: price,
+            priceChange: priceChange,
+            volume: volume,
+            high: high,
+            low: low,
+            volumeUsdt: volumeUsdt,
+            symbol: symbol
+          },
+        }));
+      }
+    });
+
+    if (binanceDepthWs) {
+      binanceDepthWs.on('message', (data) => {
+        try {
+          const parsedData = JSON.parse(data);
+          ws.send(JSON.stringify({
+            type: 'depthData',
+            symbol: parsedData.s,
+            data: JSON.parse(data)
+          }));
+        } catch (error) {
+          console.error('Error processing depth data:', error);
+        }
+      });
+    }
+  }
+
+  ws.on('message', (data) => {
+    const parsedData = JSON.parse(data);
+    if(parsedData.type === 'subscribe_trades') {
+      if(parsedData.user_id) {
+        addToMap(clients, parsedData.user_id, ws);
+      }
+    }
+  });
+
+  // Xử lý khi client ngắt kết nối
+  ws.on('close', () => {
+    // Xóa client khỏi Map
+    // for (const [userId, client] of clients.entries()) {
+    //   if (client === ws) {
+    //     clients.delete(userId);
+    //     break;
+    //   }
+    // }
+
+    // Đóng kết nối Binance nếu có
+    if (binanceConnections) {
+      if (binanceConnections.binanceWs) {
+        binanceConnections.binanceWs.close();
+      }
+      if (binanceConnections.binanceDepthWs) {
+        binanceConnections.binanceDepthWs.close();
+      }
+    }
+  });
+
+  // Xử lý lỗi kết nối
+  ws.on('error', (error) => {
+    console.error('Client WebSocket error:', error);
+  });
+});
+
+const reward = async () => {
+  const [user_trades] = await db.query(`SELECT * FROM user_trades WHERE trade_end < NOW() AND status = 'pending'`);
+  for(const user_trade of user_trades) {
+    const [user] = await db.query(`SELECT * FROM users WHERE id = ?`, [user_trade.user_id]);
+    const [time_session] = await db.query(`SELECT * FROM time_sessions WHERE id = ?`, [user_trade.session_id]);
+    const [symbol] = await db.query(`SELECT * FROM symbols WHERE id = ?`, [user_trade.symbol_id]);
+    let win_rate = time_session[0].win_rate;
+    let lose_rate = time_session[0].lose_rate;
+    let balance = user[0].balance;
+    let profit = user_trade.profit;
+
+    if(user_trade.result === 'win') {
+      profit = user_trade.amount * win_rate / 100;
+      balance += user_trade.amount + profit;
+    } else {
+      profit = user_trade.amount * lose_rate / 100;
+      balance += user_trade.amount - profit;
+    }
+
+    await db.query(`UPDATE users SET balance = ? WHERE id = ?`, [balance, user_trade.user_id]);
+    let period = time_session[0].time;
+    if(time_session[0].unit === 'm') {
+      period = time_session[0].time * 60;
+    } else if(time_session[0].unit === 'h') {
+      period = time_session[0].time * 3600;
+    } else if(time_session[0].unit === 'd') {
+      period = time_session[0].time * 86400;
+    }
+    const clientSockets = clients.get(user_trade.user_id);
+
+    for(const clientSocket of clientSockets) {
+      if(clientSocket) {
+        clientSocket.send(JSON.stringify({
+          type: 'reward',
+          period: period,
+          entry_type: parseFloat(user_trade.open_price) > parseFloat(user_trade.close_price) ? 'buy' : 'sell',
+          amount: user_trade.amount,
+          status: user_trade.result,
+          profit: profit,
+          balance: balance,
+          current_price: user_trade.close_price,
+          order_type: user_trade.type,
+          symbol: symbol[0].symbol,
+          open_price: user_trade.open_price,
+        }));
+      }
+      
+    }
+
+    await db.query(`UPDATE user_trades SET status = 'success' where id = ?`, [user_trade.id]);
+  }
+}
+
+cron.schedule('*/1 * * * * *', reward);
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+}
+// setInterval(() => {
+//   const mem = process.memoryUsage();
+//   const rssMB = (mem.rss / 1024 / 1024).toFixed(2);
+//   const heapTotalMB = (mem.heapTotal / 1024 / 1024).toFixed(2);
+//   const heapUsedMB = (mem.heapUsed / 1024 / 1024).toFixed(2);
+//   const externalMB = (mem.external / 1024 / 1024).toFixed(2);
+//   const socketCount = clients.size;
+  
+
+//   console.log('================ MEMORY USAGE ================');
+//   console.log(`RSS: ${rssMB} MB`);
+//   console.log(`Heap Total: ${heapTotalMB} MB`);
+//   console.log(`Heap Used: ${heapUsedMB} MB`);
+//   console.log(`External: ${externalMB} MB`);
+//   console.log(`Số lượng socket đang mở: ${socketCount}`);
+//   // user online
+//   for(const [userId, client] of clients.entries()) {
+//     console.log(`User ID: ${userId} is online`);
+//   }
+//   console.log('==============================================');
+// }, 30000); // mỗi 30 giây log một lần
