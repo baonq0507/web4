@@ -391,6 +391,27 @@
             </div>
             
             <div>
+                <label for="email" class="block mb-2 text-white font-medium">Email</label>
+                <div class="flex space-x-2">
+                    <input type="email" name="email" id="email" placeholder="Nhập email của bạn" class="flex-1 p-4 border border-cyan-500/30 rounded-xl bg-[#0f0f23] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300">
+                    <button type="button" id="sendVerificationBtn" class="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-xl font-medium transition-colors duration-300 whitespace-nowrap">
+                        Gửi mã
+                    </button>
+                </div>
+            </div>
+            
+            <div id="verificationSection" class="hidden">
+                <label for="verification_code" class="block mb-2 text-white font-medium">Mã xác thực</label>
+                <div class="flex space-x-2">
+                    <input type="text" name="verification_code" id="verification_code" placeholder="Nhập mã 6 số" maxlength="6" class="flex-1 p-4 border border-cyan-500/30 rounded-xl bg-[#0f0f23] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300">
+                    <button type="button" id="verifyCodeBtn" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl font-medium transition-colors duration-300 whitespace-nowrap">
+                        Xác thực
+                    </button>
+                </div>
+                <div id="verificationStatus" class="mt-2 text-sm"></div>
+            </div>
+            
+            <div>
                 <label for="password" class="block mb-2 text-white font-medium">{{ __('index.password') }}</label>
                 <input type="password" name="password" placeholder="{{ __('index.password') }}" class="w-full p-4 border border-cyan-500/30 rounded-xl bg-[#0f0f23] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300">
             </div>
@@ -426,13 +447,17 @@
 <script>
     function copyToClipboard(text) {
         navigator.clipboard.writeText(text);
-        Toastify({
-            text: "{{ __('index.copied_to_clipboard') }}",
-            duration: 3000,
-            gravity: "top",
-            style: {
-                background: "linear-gradient(to right, #3ddeea, #3ddeea)",
-            }
-        }).showToast();
+        if (typeof Toastify !== 'undefined') {
+            Toastify({
+                text: "{{ __('index.copied_to_clipboard') }}",
+                duration: 3000,
+                gravity: "top",
+                style: {
+                    background: "linear-gradient(to right, #3ddeea, #3ddeea)",
+                }
+            }).showToast();
+        } else {
+            alert("{{ __('index.copied_to_clipboard') }}");
+        }
     }
 </script>

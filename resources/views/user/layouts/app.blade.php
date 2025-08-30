@@ -744,6 +744,234 @@
         });
     </script>
 
+    <!-- Email Verification Script -->
+    <script>
+        // Email verification functionality
+        let emailVerified = false;
+        let verifiedEmail = '';
+
+        // Đảm bảo DOM đã load trước khi chạy JavaScript
+        $(document).ready(function() {
+            // Send verification code
+            $('#sendVerificationBtn').on('click', function() {
+                const email = $('#email').val();
+                if (!email) {
+                    if (typeof Toastify !== 'undefined') {
+                        Toastify({
+                            text: "Vui lòng nhập email trước",
+                            duration: 3000,
+                            gravity: "top",
+                            style: {
+                                background: "linear-gradient(to right, #ff0000, #ff0000)",
+                            }
+                        }).showToast();
+                    } else {
+                        alert("Vui lòng nhập email trước");
+                    }
+                    return;
+                }
+
+                const btn = $(this);
+                btn.prop('disabled', true);
+                btn.html("<i class='fa fa-spinner fa-spin'></i> Đang gửi...");
+
+                $.ajax({
+                    url: "{{ route('send.verification.code') }}",
+                    type: 'POST',
+                    data: {
+                        email: email,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        if (response.status) {
+                            if (typeof Toastify !== 'undefined') {
+                                Toastify({
+                                    text: response.message,
+                                    duration: 3000,
+                                    gravity: "top",
+                                    style: {
+                                        background: "linear-gradient(to right, #3ddeea, #3ddeea)",
+                                    }
+                                }).showToast();
+                            } else {
+                                alert(response.message);
+                            }
+                            
+                            $('#verificationSection').removeClass('hidden');
+                            $('#verificationStatus').html('<span class="text-cyan-400">Mã xác thực đã được gửi đến email của bạn</span>');
+                        } else {
+                            if (typeof Toastify !== 'undefined') {
+                                Toastify({
+                                    text: response.message,
+                                    duration: 3000,
+                                    gravity: "top",
+                                    style: {
+                                        background: "linear-gradient(to right, #ff0000, #ff0000)",
+                                    }
+                                }).showToast();
+                            } else {
+                                alert(response.message);
+                            }
+                        }
+                    },
+                    error: function(response) {
+                        const message = response.responseJSON?.message || 'Có lỗi xảy ra';
+                        if (typeof Toastify !== 'undefined') {
+                            Toastify({
+                                text: message,
+                                duration: 3000,
+                                gravity: "top",
+                                style: {
+                                    background: "linear-gradient(to right, #ff0000, #ff0000)",
+                                }
+                            }).showToast();
+                        } else {
+                            alert(message);
+                        }
+                    },
+                    complete: function() {
+                        btn.prop('disabled', false);
+                        btn.html("Gửi mã");
+                    }
+                });
+            });
+
+            // Verify code
+            $('#verifyCodeBtn').on('click', function() {
+                const email = $('#email').val();
+                const code = $('#verification_code').val();
+                
+                if (!code) {
+                    if (typeof Toastify !== 'undefined') {
+                        Toastify({
+                            text: "Vui lòng nhập mã xác thực",
+                            duration: 3000,
+                            gravity: "top",
+                            style: {
+                                background: "linear-gradient(to right, #ff0000, #ff0000)",
+                            }
+                        }).showToast();
+                    } else {
+                        alert("Vui lòng nhập mã xác thực");
+                    }
+                    return;
+                }
+
+                const btn = $(this);
+                btn.prop('disabled', true);
+                btn.html("<i class='fa fa-spinner fa-spin'></i> Đang xác thực...");
+
+                $.ajax({
+                    url: "{{ route('verify.email.code') }}",
+                    type: 'POST',
+                    data: {
+                        email: email,
+                        verification_code: code,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        if (response.status) {
+                            if (typeof Toastify !== 'undefined') {
+                                Toastify({
+                                    text: response.message,
+                                    duration: 3000,
+                                    gravity: "top",
+                                    style: {
+                                        background: "linear-gradient(to right, #3ddeea, #3ddeea)",
+                                    }
+                                }).showToast();
+                            } else {
+                                alert(response.message);
+                            }
+                            
+                            emailVerified = true;
+                            verifiedEmail = email;
+                            $('#verificationStatus').html('<span class="text-green-400"><i class="fa fa-check-circle"></i> Email đã được xác thực thành công!</span>');
+                            $('#email').prop('readonly', true);
+                            $('#sendVerificationBtn').prop('disabled', true);
+                            $('#verification_code').prop('readonly', true);
+                            $('#verifyCodeBtn').prop('disabled', true);
+                        } else {
+                            if (typeof Toastify !== 'undefined') {
+                                Toastify({
+                                    text: response.message,
+                                    duration: 3000,
+                                    gravity: "top",
+                                    style: {
+                                        background: "linear-gradient(to right, #ff0000, #ff0000)",
+                                    }
+                                }).showToast();
+                            } else {
+                                alert(response.message);
+                            }
+                        }
+                    },
+                    error: function(response) {
+                        const message = response.responseJSON?.message || 'Có lỗi xảy ra';
+                        if (typeof Toastify !== 'undefined') {
+                            Toastify({
+                                text: message,
+                                duration: 3000,
+                                gravity: "top",
+                                style: {
+                                    background: "linear-gradient(to right, #ff0000, #ff0000)",
+                                }
+                            }).showToast();
+                        } else {
+                            alert(message);
+                        }
+                    },
+                    complete: function() {
+                        btn.prop('disabled', false);
+                        btn.html("Xác thực");
+                    }
+                });
+            });
+
+            // Prevent form submission if email not verified
+            $('#formRegister').on('submit', function(e) {
+                if (!emailVerified) {
+                    e.preventDefault();
+                    if (typeof Toastify !== 'undefined') {
+                        Toastify({
+                            text: "Vui lòng xác thực email trước khi đăng ký",
+                            duration: 3000,
+                            gravity: "top",
+                            style: {
+                                background: "linear-gradient(to right, #ff0000, #ff0000)",
+                            }
+                        }).showToast();
+                    } else {
+                        alert("Vui lòng xác thực email trước khi đăng ký");
+                    }
+                    return false;
+                }
+                
+                if ($('#email').val() !== verifiedEmail) {
+                    e.preventDefault();
+                    if (typeof Toastify !== 'undefined') {
+                        Toastify({
+                            text: "Email không khớp với email đã xác thực",
+                            duration: 3000,
+                            gravity: "top",
+                            style: {
+                                background: "linear-gradient(to right, #ff0000, #ff0000)",
+                            }
+                        }).showToast();
+                    } else {
+                        alert("Email không khớp với email đã xác thực");
+                    }
+                    return false;
+                }
+            });
+
+            // Debug: Kiểm tra xem button có được tìm thấy không
+            console.log('Email verification script loaded');
+            console.log('sendVerificationBtn found:', $('#sendVerificationBtn').length);
+            console.log('verifyCodeBtn found:', $('#verifyCodeBtn').length);
+        });
+    </script>
+
 </body>
 
 </html>

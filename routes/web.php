@@ -30,6 +30,8 @@ Route::middleware('language')->group(function () {
     Route::get('/copy-trading/overview', [CopyTradingController::class, 'overview'])->name('overview');
     Route::get('/register', [UserController::class, 'register'])->name('register');
     Route::post('/register', [HomeController::class, 'registerPost'])->name('registerPost');
+    Route::post('/send-verification-code', [App\Http\Controllers\EmailVerificationController::class, 'sendVerificationCode'])->name('send.verification.code');
+    Route::post('/verify-email-code', [App\Http\Controllers\EmailVerificationController::class, 'verifyCode'])->name('verify.email.code');
     Route::post('/login', [HomeController::class, 'loginPost'])->name('loginPost');
     Route::get('/about-me', [AboutMeController::class, 'index'])->name('about.me');
 Route::get('/msb', [AboutMeController::class, 'msb'])->name('msb');

