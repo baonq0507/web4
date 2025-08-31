@@ -1,14 +1,13 @@
 <header class="text-white w-full shadow fixed top-0 z-50 bg-black">
     <div class="container mx-auto px-4 md:px-6 lg:px-8 flex items-center justify-between h-16">
-        <!-- Left Side - Logo and Buy Coins Button -->
+        <!-- Left Side - Menu Button and Buy Coins Button -->
         <div class="flex items-center space-x-6">
-            <!-- Logo -->
-            <a href="/" class="flex items-center space-x-3">
-                <img src="{{ asset('images/app/' . config('app_logo')) }}" alt="{{ config('app_name') }}" class="h-8 w-auto">
-                <!-- <span class="text-xl font-bold text-white">
-                    {{ config('app_name') }}
-                </span> -->
-            </a>
+            <!-- Menu Button (Mobile Only) -->
+            <button id="menuDrawerBtn" class="lg:hidden flex items-center justify-center w-10 h-10 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors duration-300">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
 
             <!-- Buy Coins Quickly Button -->
             <!-- <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-300">
@@ -16,7 +15,7 @@
             </button> -->
         </div>
 
-        <!-- Center - Navigation Menu -->
+        <!-- Center - Navigation Menu (Desktop Only) -->
         <nav class="hidden lg:flex items-center space-x-8 text-white">
             <!-- Trade Dropdown -->
             <div class="relative group">
@@ -103,10 +102,10 @@
             @else
             <!-- Login/Register Buttons -->
             <div class="flex items-center space-x-3">
-                <button id="btnLogin" class="bg-transparent border border-white text-white px-4 py-2 rounded-lg font-medium hover:bg-white hover:text-black transition-all duration-300">
+                <button id="btnLogin" class="bg-transparent border border-white text-white px-2 py-2 rounded-lg font-medium hover:bg-white hover:text-black transition-all duration-300 text-sm md:text-base md:px-4 md:py-2">
                     {{ __('index.login') }}
                 </button>
-                <button id="btnRegister" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-300">
+                <button id="btnRegister" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-2 rounded-lg font-medium transition-colors duration-300 text-sm md:text-base md:px-4 md:py-2">
                     {{ __('index.register') }}
                 </button>
             </div>
@@ -155,17 +154,160 @@
         </div>
     </div>
 
+    <!-- Menu Drawer (Mobile Only) -->
+    <div id="menuDrawer" class="lg:hidden fixed top-0 left-0 h-full bg-[#000000] text-white shadow-2xl transform -translate-x-full transition-transform duration-300 overflow-y-auto border-r " style="z-index: 1000; width: 350px;">
+        <div class="p-6 flex justify-between items-center  ">
+            <div class="flex items-center space-x-3">
+                <img src="{{ asset('images/app/' . config('app_logo')) }}" alt="{{ config('app_name') }}" class="h-8 w-auto">
+                <!-- <span class="text-xl font-bold text-cyan-400">{{ config('app_name') }}</span> -->
+            </div>
+            <button id="closeMenuDrawerBtn" class="text-cyan-400 hover:text-red-500 text-2xl leading-none transition-colors duration-300">&times;</button>
+        </div>
+        
+        <div class="p-6 space-y-6">
+            <!-- Main Navigation -->
+            <div class="space-y-4">
+                <h3 class="text-lg font-bold text-white   pb-2">Main Menu</h3>
+                
+                <!-- Trade Section -->
+                <div class="space-y-2">
+                    <h4 class=" font-semibold text-sm uppercase tracking-wider">{{ __('index.trade') }}</h4>
+                    <div class="space-y-1 ml-4">
+                        <a href="{{ route('trading') }}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
+                            <i class="fa fa-chart-line text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
+                            <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">{{ __('index.trade') }}</span>
+                        </a>
+                        <a href="{{ route('market') }}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
+                            <i class="fa fa-chart-bar text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
+                            <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">{{ __('index.market.title') }}</span>
+                        </a>
+                    </div>
+                </div>
+                <!-- Finance Section -->
+                 @if(Auth::check())
+                <div class="space-y-2">
+                    <h4 class="text-cyan-400 font-semibold text-sm uppercase tracking-wider">Finance</h4>
+                    <div class="space-y-1 ml-4">
+                        <a href="{{ route('deposit') }}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
+                            <i class="fa fa-arrow-up text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
+                            <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">{{ __('index.deposit') }}</span>
+                        </a>
+                        <a href="{{ route('withdraw') }}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
+                            <i class="fa fa-arrow-down text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
+                            <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">{{ __('index.withdraw') }}</span>
+                        </a>
+                        <a href="{{ route('wallet') }}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
+                            <i class="fa fa-wallet text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
+                            <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">{{ __('index.wallet') }}</span>
+                        </a>
+                    </div>
+                </div>
+                @endif
+
+                <!-- Event Hall Section -->
+                <!-- <div class="space-y-2">
+                    <h4 class="text-cyan-400 font-semibold text-sm uppercase tracking-wider">Event Hall</h4>
+                    <div class="space-y-1 ml-4">
+                        <a href="{{ route('ky-quy') }}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
+                            <i class="fa fa-gift text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
+                            <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">{{ __('index.ky_quy') }}</span>
+                        </a>
+                    </div>
+                </div> -->
+            </div>
+
+            <!-- Mobile Navigation Links -->
+            <div class="space-y-4 pt-4 border-t ">
+                <h3 class="text-lg font-bold text-white   pb-2">Quick Access</h3>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <a href="{{ route('home') }}" class="flex flex-col items-center p-3 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
+                        <i class="fa fa-home text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300 text-xl mb-1"></i>
+                        <span class="text-white group-hover:text-cyan-300 transition-colors duration-300 text-xs">{{ __('index.home.home') }}</span>
+                    </a>
+                    <a href="{{ route('market') }}" class="flex flex-col items-center p-3 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
+                        <i class="fa fa-chart-line text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300 text-xl mb-1"></i>
+                        <span class="text-white group-hover:text-cyan-300 transition-colors duration-300 text-xs">{{ __('index.market.title') }}</span>
+                    </a>
+                    <a href="{{ route('trading') }}" class="flex flex-col items-center p-3 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
+                        <img src="{{ asset('images/app/' . config('app_logo')) }}" class="w-6 h-6 rounded-full mb-1">
+                        <span class="text-white group-hover:text-cyan-300 transition-colors duration-300 text-xs">{{ __('index.trade') }}</span>
+                    </a>
+                    <a href="{{ route('wallet') }}" class="flex flex-col items-center p-3 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
+                        <i class="fa fa-bank text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300 text-xl mb-1"></i>
+                        <span class="text-white group-hover:text-cyan-300 transition-colors duration-300 text-xs">{{ __('index.wallet') }}</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Additional Links -->
+            <div class="space-y-4 pt-4 border-t ">
+                <h3 class="text-lg font-bold text-white   pb-2">Support & Info</h3>
+                
+                <div class="space-y-2">
+                    <a href="#" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
+                        <i class="fa fa-headset text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
+                        <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">Help Center</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
+                        <i class="fa fa-envelope text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
+                        <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">Contact Us</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
+                        <i class="fa fa-shield-alt text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
+                        <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">Security</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
+                        <i class="fa fa-file-text text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
+                        <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">Terms of Service</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
+                        <i class="fa fa-user-secret text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
+                        <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">Privacy Policy</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Social Media -->
+            <div class="space-y-4 pt-4 border-t ">
+                <h3 class="text-lg font-bold text-white   pb-2">Follow Us</h3>
+                
+                <div class="flex space-x-4">
+                    <a href="#" class="w-10 h-10 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300 shadow-lg">
+                        <i class="fab fa-twitter text-white"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300 shadow-lg">
+                        <i class="fab fa-telegram text-white"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300 shadow-lg">
+                        <i class="fab fa-discord text-white"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300 shadow-lg">
+                        <i class="fab fa-facebook text-white"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Copyright -->
+            <div class="pt-4 border-t ">
+                <p class="text-gray-400 text-sm text-center">
+                    Copyright © 2017-{{ date('Y') }} {{ config('app_name') }}. All Rights Reserved.
+                </p>
+            </div>
+        </div>
+    </div>
+
     <!-- Profile Drawer (Keep existing code) -->
     @if(Auth::check())
-    <div id="profileDrawer" class="fixed top-0 right-[-12px] h-full bg-gradient-to-b from-[#1a1a2e] to-[#0f0f23] text-white shadow-2xl transform translate-x-full transition-transform duration-300 overscroll-auto border-l border-cyan-500/30" style="z-index: 1000; width: 350px;">
-        <div class="p-6 flex justify-between items-center border-b border-cyan-500/30">
+    <div id="profileDrawer" class="fixed top-0 right-[-12px] h-full bg-gradient-to-b from-[#1a1a2e] to-[#0f0f23] text-white shadow-2xl transform translate-x-full transition-transform duration-300 overflow-y-auto border-l " style="z-index: 1000; width: 350px;">
+        <div class="p-6 flex justify-between items-center  ">
             <span class="text-xl font-bold text-cyan-400">{{ Auth::user()->name }}</span>
             <button id="closeDrawerBtn" class="text-cyan-400 hover:text-red-500 text-2xl leading-none transition-colors duration-300">&times;</button>
         </div>
         
         <div class="p-6 space-y-6">
             <!-- User Info Card -->
-            <div class="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/30 p-6 rounded-2xl shadow-lg">
+            <div class="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border  p-6 rounded-2xl shadow-lg">
                 <div class="flex items-center space-x-4">
                     <div class="relative">
                         <img src="{{ Auth::user()->avatar }}" alt="{{ __('index.avatar') }}" class="w-16 h-16 rounded-full border-2 border-cyan-400">
@@ -333,7 +475,7 @@
 @if(!Auth::check())
 <!-- Modal Đăng Nhập -->
 <div id="loginModal" class="fixed inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm z-50 hidden">
-    <div class="bg-gradient-to-b from-[#1a1a2e] to-[#0f0f23] rounded-2xl p-8 w-full max-w-md relative border border-cyan-500/30 shadow-2xl">
+    <div class="bg-gradient-to-b from-[#1a1a2e] to-[#0f0f23] rounded-2xl p-8 w-full max-w-md relative border  shadow-2xl">
         <button id="btnCloseLogin" class="cursor-pointer absolute top-4 right-4 text-gray-400 hover:text-red-400 transition-colors duration-300">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
@@ -348,13 +490,13 @@
         <form action="{{ route('loginPost') }}" method="post" id="formLogin" class="space-y-6">
             @csrf
             <div>
-                <label for="phone" class="block mb-2 text-white font-medium">{{ __('index.phone') }}</label>
-                <input type="text" name="phone" placeholder="{{ __('index.phone') }}" class="w-full p-4 border border-cyan-500/30 rounded-xl bg-[#0f0f23] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300">
+                <label for="email" class="block mb-2 text-white font-medium">{{ __('index.email') }}</label>
+                <input type="email" name="email" placeholder="{{ __('index.email') }}" class="w-full p-2 border  rounded-xl bg-[#0f0f23] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300">
             </div>
             
             <div>
                 <label for="password" class="block mb-2 text-white font-medium">{{ __('index.password') }}</label>
-                <input type="password" name="password" placeholder="{{ __('index.password') }}" class="w-full p-4 border border-cyan-500/30 rounded-xl bg-[#0f0f23] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300">
+                <input type="password" name="password" placeholder="{{ __('index.password') }}" class="w-full p-2 border  rounded-xl bg-[#0f0f23] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300">
             </div>
             
             <button type="submit" class="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white py-4 rounded-xl font-semibold transition-all duration-300 ease-in-out hover:scale-105 shadow-lg">
@@ -366,7 +508,7 @@
 
 <!-- Modal Đăng Ký -->
 <div id="registerModal" class="fixed inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm z-50 hidden">
-    <div class="bg-gradient-to-b from-[#1a1a2e] to-[#0f0f23] rounded-2xl p-8 w-full max-w-md relative border border-cyan-500/30 shadow-2xl">
+    <div class="bg-gradient-to-b from-[#1a1a2e] to-[#0f0f23] rounded-2xl p-8 w-full max-w-md relative border  shadow-2xl">
         <button id="btnCloseRegister" class="absolute top-4 right-4 text-gray-400 hover:text-red-400 transition-colors duration-300">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
@@ -382,18 +524,18 @@
             @csrf
             <div>
                 <label for="name" class="block mb-2 text-white font-medium">{{ __('index.fullname') }}</label>
-                <input type="text" name="name" placeholder="{{ __('index.fullname') }}" class="w-full p-4 border border-cyan-500/30 rounded-xl bg-[#0f0f23] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300">
+                <input type="text" name="name" placeholder="{{ __('index.fullname') }}" class="w-full p-2 border  rounded-xl bg-[#0f0f23] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300">
             </div>
             
             <div>
                 <label for="phone" class="block mb-2 text-white font-medium">{{ __('index.phone') }}</label>
-                <input type="text" name="phone" placeholder="{{ __('index.phone') }}" class="w-full p-4 border border-cyan-500/30 rounded-xl bg-[#0f0f23] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300">
+                <input type="text" name="phone" placeholder="{{ __('index.phone') }}" class="w-full p-2 border  rounded-xl bg-[#0f0f23] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300">
             </div>
             
             <div>
                 <label for="email" class="block mb-2 text-white font-medium">Email</label>
                 <div class="flex space-x-2">
-                    <input type="email" name="email" id="email" placeholder="Nhập email của bạn" class="flex-1 p-4 border border-cyan-500/30 rounded-xl bg-[#0f0f23] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300">
+                    <input type="email" name="email" id="email" placeholder="Nhập email của bạn" class="flex-1 p-2 border  rounded-xl bg-[#0f0f23] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300">
                     <button type="button" id="sendVerificationBtn" class="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-xl font-medium transition-colors duration-300 whitespace-nowrap">
                         Gửi mã
                     </button>
@@ -403,7 +545,7 @@
             <div id="verificationSection" class="hidden">
                 <label for="verification_code" class="block mb-2 text-white font-medium">Mã xác thực</label>
                 <div class="flex space-x-2">
-                    <input type="text" name="verification_code" id="verification_code" placeholder="Nhập mã 6 số" maxlength="6" class="flex-1 p-4 border border-cyan-500/30 rounded-xl bg-[#0f0f23] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300">
+                    <input type="text" name="verification_code" id="verification_code" placeholder="Nhập mã 6 số" maxlength="6" class="flex-1 p-2 border  rounded-xl bg-[#0f0f23] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300">
                     <button type="button" id="verifyCodeBtn" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl font-medium transition-colors duration-300 whitespace-nowrap">
                         Xác thực
                     </button>
@@ -413,26 +555,26 @@
             
             <div>
                 <label for="password" class="block mb-2 text-white font-medium">{{ __('index.password') }}</label>
-                <input type="password" name="password" placeholder="{{ __('index.password') }}" class="w-full p-4 border border-cyan-500/30 rounded-xl bg-[#0f0f23] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300">
+                <input type="password" name="password" placeholder="{{ __('index.password') }}" class="w-full p-2 border  rounded-xl bg-[#0f0f23] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300">
             </div>
             
             @if(config('disabled_referal') == 'on')
             <div>
                 <label for="referral_code" class="block mb-2 text-white font-medium">{{ __('index.referral_code') }}</label>
-                <input type="text" name="referral_code" placeholder="{{ __('index.enter_referral_code') }}" class="w-full p-4 border border-cyan-500/30 rounded-xl bg-[#0f0f23] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300">
+                <input type="text" name="referral_code" placeholder="{{ __('index.enter_referral_code') }}" class="w-full p-2 border  rounded-xl bg-[#0f0f23] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300">
             </div>
             @endif
             
             <div>
                 <label for="captcha" class="block mb-2 text-white font-medium">{{ __('index.captcha') }}</label>
                 <div class="flex items-center space-x-3">
-                    <input type="text" name="captcha" placeholder="{{ __('index.enter_captcha') }}" class="flex-1 p-4 border border-cyan-500/30 rounded-xl bg-[#0f0f23] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300">
-                    <img src="{{ captcha_src() }}" alt="captcha" class="captcha-img cursor-pointer rounded-lg" style="height: 56px;">
+                    <input type="text" name="captcha" placeholder="{{ __('index.enter_captcha') }}" class="flex-1 p-2 border  rounded-xl bg-[#0f0f23] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300">
+                    <img src="{{ captcha_src() }}" alt="captcha" class="captcha-img cursor-pointer rounded-lg" style="height: 40px;">
                 </div>
             </div>
             
             <div class="flex items-center space-x-3">
-                <input type="checkbox" name="agree_terms" id="agree_terms" class="w-5 h-5 text-cyan-500 bg-[#0f0f23] border-cyan-500/30 rounded focus:ring-cyan-500 focus:ring-2">
+                <input type="checkbox" name="agree_terms" id="agree_terms" class="w-5 h-5 text-cyan-500 bg-[#0f0f23]  rounded focus:ring-cyan-500 focus:ring-2">
                 <label for="agree_terms" class="text-sm text-gray-300">{{ __('index.agree_terms', ['app_name' => config('app_name')]) }}</label>
             </div>
             
@@ -460,4 +602,73 @@
             alert("{{ __('index.copied_to_clipboard') }}");
         }
     }
+
+    // Menu Drawer functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuDrawerBtn = document.getElementById('menuDrawerBtn');
+        const closeMenuDrawerBtn = document.getElementById('closeMenuDrawerBtn');
+        const menuDrawer = document.getElementById('menuDrawer');
+        const profileDrawerBtn = document.getElementById('profileDrawerBtn');
+        const profileDrawerBtn1 = document.getElementById('profileDrawerBtn1');
+        const closeDrawerBtn = document.getElementById('closeDrawerBtn');
+        const profileDrawer = document.getElementById('profileDrawer');
+
+        // Open menu drawer
+        if (menuDrawerBtn) {
+            menuDrawerBtn.addEventListener('click', function() {
+                menuDrawer.classList.remove('-translate-x-full');
+                menuDrawer.classList.add('translate-x-0');
+            });
+        }
+
+        // Close menu drawer
+        if (closeMenuDrawerBtn) {
+            closeMenuDrawerBtn.addEventListener('click', function() {
+                menuDrawer.classList.remove('translate-x-0');
+                menuDrawer.classList.add('-translate-x-full');
+            });
+        }
+
+        // Close menu drawer when clicking outside
+        document.addEventListener('click', function(event) {
+            if (menuDrawer && !menuDrawer.contains(event.target) && !menuDrawerBtn.contains(event.target)) {
+                if (menuDrawer.classList.contains('translate-x-0')) {
+                    menuDrawer.classList.remove('translate-x-0');
+                    menuDrawer.classList.add('-translate-x-full');
+                }
+            }
+        });
+
+        // Profile drawer functionality (existing)
+        if (profileDrawerBtn) {
+            profileDrawerBtn.addEventListener('click', function() {
+                profileDrawer.classList.remove('translate-x-full');
+                profileDrawer.classList.add('translate-x-0');
+            });
+        }
+
+        if (profileDrawerBtn1) {
+            profileDrawerBtn1.addEventListener('click', function() {
+                profileDrawer.classList.remove('translate-x-full');
+                profileDrawer.classList.add('translate-x-0');
+            });
+        }
+
+        if (closeDrawerBtn) {
+            closeDrawerBtn.addEventListener('click', function() {
+                profileDrawer.classList.remove('translate-x-0');
+                profileDrawer.classList.add('translate-x-full');
+            });
+        }
+
+        // Close profile drawer when clicking outside
+        document.addEventListener('click', function(event) {
+            if (profileDrawer && !profileDrawer.contains(event.target) && !profileDrawerBtn.contains(event.target) && !profileDrawerBtn1.contains(event.target)) {
+                if (profileDrawer.classList.contains('translate-x-0')) {
+                    profileDrawer.classList.remove('translate-x-0');
+                    profileDrawer.classList.add('translate-x-full');
+                }
+            }
+        });
+    });
 </script>

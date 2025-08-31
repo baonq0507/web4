@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class EmailVerificationController extends Controller
 {
@@ -28,9 +29,10 @@ class EmailVerificationController extends Controller
 
         $verificationCode = Str::random(6);
         
-        // Lưu mã xác thực vào session để kiểm tra sau
+        // Lưu mã xác thực vào session với thời gian hết hạn (15 phút)
         session(['email_verification_code' => $verificationCode]);
         session(['email_to_verify' => $request->email]);
+        session(['email_verification_expires' => now()->addMinutes(15)->timestamp]);
 
         // Gửi email xác thực
         try {
@@ -70,8 +72,19 @@ class EmailVerificationController extends Controller
 
         $storedCode = session('email_verification_code');
         $storedEmail = session('email_to_verify');
+        $expiresAt = session('email_verification_expires');
 
-        if (!$storedCode || !$storedEmail) {
+        if (!$storedCode || !$storedEmail || !$expiresAt) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Mã xác thực đã hết hạn. Vui lòng gửi lại.'
+            ], 422);
+        }
+
+        // Kiểm tra thời gian hết hạn
+        if (now()->timestamp > $expiresAt) {
+            // Xóa session hết hạn
+            session()->forget(['email_verification_code', 'email_to_verify', 'email_verification_expires']);
             return response()->json([
                 'status' => false,
                 'message' => 'Mã xác thực đã hết hạn. Vui lòng gửi lại.'
@@ -92,8 +105,8 @@ class EmailVerificationController extends Controller
             ], 422);
         }
 
-        // Xóa session sau khi xác thực thành công
-        session()->forget(['email_verification_code', 'email_to_verify']);
+        // Không xóa session ở đây, để giữ lại cho việc đăng ký
+        // Session sẽ được xóa sau khi đăng ký thành công trong HomeController
 
         return response()->json([
             'status' => true,

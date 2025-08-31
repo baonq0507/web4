@@ -1,0 +1,62 @@
+.main-content {
+    background: #f8f9fa;
+}
+
+.section {
+    padding: 4rem 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    text-align: center;
+}
+
+.section h2 {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.section p {
+    font-size: 1.2rem;
+    color: #666;
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Responsive cho main content */
+@media (max-width: 768px) {
+    .section {
+        padding: 3rem 0;
+    }
+    
+    .container {
+        padding: 0 1rem;
+    }
+    
+    .section h2 {
+        font-size: 2rem;
+    }
+    
+    .section p {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .section {
+        padding: 2rem 0;
+    }
+    
+    .section h2 {
+        font-size: 1.8rem;
+    }
+    
+    .section p {
+        font-size: 1rem;
+    }
+}

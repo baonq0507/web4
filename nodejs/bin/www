@@ -49,33 +49,62 @@ function addToMap(map, key, value) {
 
 // Hàm tạo kết nối Binance WebSocket
 const createBinanceConnection = (symbols, ws, query) => {
-  const binanceWs = new WebSocket('wss://stream.binance.com:9443/ws');
-  let binanceDepthWs = null;
+  // Sử dụng endpoint đúng cho Binance WebSocket (không còn dùng /ws, mà dùng /stream?streams=...)
+  // Xây dựng chuỗi streams cho nhiều symbol
+  let streams = [];
+  if (Array.isArray(symbols)) {
+    streams = symbols.map(symbol => symbol.toLowerCase() + '@ticker');
+  } else {
+    streams = [symbols.toLowerCase() + '@ticker'];
+  }
+  const streamString = streams.join('/');
+  const binanceWsUrl = `wss://stream.binance.com:9443/stream?streams=${streamString}`;
+  let binanceWs;
+  try {
+    binanceWs = new WebSocket(binanceWsUrl);
+  } catch (err) {
+    console.error('Không thể kết nối Binance WebSocket:', err);
+    return { binanceWs: null, binanceDepthWs: null };
+  }
 
-  // Only create depth WebSocket if depth10=true
+  let binanceDepthWs = null;
   if (query.depth === 'true') {
-    binanceDepthWs = new WebSocket('wss://stream.binance.com:9443/ws');
+    let depthStreams = [];
+    if (Array.isArray(symbols)) {
+      depthStreams = symbols.map(symbol => symbol.toLowerCase() + '@depth');
+    } else {
+      depthStreams = [symbols.toLowerCase() + '@depth'];
+    }
+    const depthStreamString = depthStreams.join('/');
+    const binanceDepthWsUrl = `wss://stream.binance.com:9443/stream?streams=${depthStreamString}`;
+    try {
+      binanceDepthWs = new WebSocket(binanceDepthWsUrl);
+    } catch (err) {
+      console.error('Không thể kết nối Binance Depth WebSocket:', err);
+      binanceDepthWs = null;
+    }
   }
 
   const setupBinanceWs = (ws) => {
     ws.on('open', () => {
-      const subscribeMsg = {
-        method: 'SUBSCRIBE',
-        params: Array.isArray(symbols) ? symbols.map(symbol => symbol.toLowerCase() + '@ticker') : symbols.toLowerCase() + '@ticker',
-        id: 1
-      };
-      ws.send(JSON.stringify(subscribeMsg));
+      // Không cần gửi SUBSCRIBE khi dùng endpoint /stream?streams=...
+      // console.log('Đã kết nối Binance WebSocket:', ws.url);
     });
 
-    ws.on('close', () => {
-      console.log('Binance WebSocket đóng, đang kết nối lại...');
+    ws.on('close', (code, reason) => {
+      console.log('Binance WebSocket đóng, đang kết nối lại...', code, reason && reason.toString());
       setTimeout(() => {
-        setupBinanceWs(new WebSocket('wss://stream.binance.com:9443/ws'));
-      }, 5000); // Đợi 5 giây trước khi kết nối lại
+        // Kết nối lại với cùng URL
+        setupBinanceWs(new WebSocket(ws.url));
+      }, 5000);
     });
 
     ws.on('error', (error) => {
-      console.error('Binance WebSocket error:', error);
+      if (error && error.message && error.message.includes('403')) {
+        console.error('Binance WebSocket bị từ chối (403 Forbidden). Vui lòng kiểm tra endpoint hoặc giới hạn kết nối.');
+      } else {
+        console.error('Binance WebSocket error:', error);
+      }
       ws.close();
     });
 
@@ -86,22 +115,22 @@ const createBinanceConnection = (symbols, ws, query) => {
     if (!ws) return null;
 
     ws.on('open', () => {
-      const subscribeMsg = {
-        method: 'SUBSCRIBE',
-        params: Array.isArray(symbols) ? symbols.map(symbol => symbol.toLowerCase() + '@depth') : symbols.toLowerCase() + '@depth',
-        id: 2
-      };
-      ws.send(JSON.stringify(subscribeMsg));
+      // Không cần gửi SUBSCRIBE khi dùng endpoint /stream?streams=...
+      // console.log('Đã kết nối Binance Depth WebSocket:', ws.url);
     });
 
-    ws.on('close', () => {
+    ws.on('close', (code, reason) => {
       // setTimeout(() => {
-      //   setupBinanceDepthWs(new WebSocket('wss://stream.binance.com:9443/ws'));
+      //   setupBinanceDepthWs(new WebSocket(ws.url));
       // }, 5000);
     });
 
     ws.on('error', (error) => {
-      console.error('Binance Depth WebSocket error:', error);
+      if (error && error.message && error.message.includes('403')) {
+        console.error('Binance Depth WebSocket bị từ chối (403 Forbidden). Vui lòng kiểm tra endpoint hoặc giới hạn kết nối.');
+      } else {
+        console.error('Binance Depth WebSocket error:', error);
+      }
       ws.close();
     });
 
@@ -120,47 +149,62 @@ wss.on('connection', async (ws, req) => {
 
   // Handle Binance WebSocket connections
   if (query.symbols) {
-    const symbols = JSON.parse(query.symbols);
+    let symbols;
+    try {
+      symbols = JSON.parse(query.symbols);
+    } catch (e) {
+      symbols = query.symbols;
+    }
     binanceConnections = createBinanceConnection(symbols, ws, query);
     const { binanceWs, binanceDepthWs } = binanceConnections;
 
-    binanceWs.on('message', (data) => {
-      const parsedData = JSON.parse(data);
-      
-      if (parsedData.s) {
-        const symbol = parsedData.s;
-        const price = parseFloat(parsedData.c);
-        const priceChange = parseFloat(parsedData.P);
-        const volume = parseFloat(parsedData.v);
-        const high = parseFloat(parsedData.h);
-        const low = parseFloat(parsedData.l);
-        const volumeUsdt = parseFloat(parsedData.q);
-        ws.send(JSON.stringify({
-          type: 'marketData',
-          symbol: symbol,
-          data: JSON.parse(data),
-          data1: {
-            price: price,
-            priceChange: priceChange,
-            volume: volume,
-            high: high,
-            low: low,
-            volumeUsdt: volumeUsdt,
-            symbol: symbol
-          },
-        }));
-      }
-    });
+    if (binanceWs) {
+      binanceWs.on('message', (data) => {
+        let parsedData;
+        try {
+          parsedData = JSON.parse(data);
+        } catch (e) {
+          // Có thể là buffer, bỏ qua
+          return;
+        }
+        // Dữ liệu trả về từ endpoint /stream?streams=... sẽ có dạng { stream, data }
+        if (parsedData.data && parsedData.data.s) {
+          const symbol = parsedData.data.s;
+          const price = parseFloat(parsedData.data.c);
+          const priceChange = parseFloat(parsedData.data.P);
+          const volume = parseFloat(parsedData.data.v);
+          const high = parseFloat(parsedData.data.h);
+          const low = parseFloat(parsedData.data.l);
+          const volumeUsdt = parseFloat(parsedData.data.q);
+          ws.send(JSON.stringify({
+            type: 'marketData',
+            symbol: symbol,
+            data: parsedData.data,
+            data1: {
+              price: price,
+              priceChange: priceChange,
+              volume: volume,
+              high: high,
+              low: low,
+              volumeUsdt: volumeUsdt,
+              symbol: symbol
+            },
+          }));
+        }
+      });
+    }
 
     if (binanceDepthWs) {
       binanceDepthWs.on('message', (data) => {
         try {
           const parsedData = JSON.parse(data);
-          ws.send(JSON.stringify({
-            type: 'depthData',
-            symbol: parsedData.s,
-            data: JSON.parse(data)
-          }));
+          if (parsedData.data && parsedData.data.s) {
+            ws.send(JSON.stringify({
+              type: 'depthData',
+              symbol: parsedData.data.s,
+              data: parsedData.data
+            }));
+          }
         } catch (error) {
           console.error('Error processing depth data:', error);
         }

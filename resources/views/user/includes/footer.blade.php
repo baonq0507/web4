@@ -38,6 +38,12 @@
                     <li>
                         <a href="{{ route('trading') }}" class="text-gray-400 hover:text-cyan-400 transition-colors duration-300 flex items-center group">
                             <i class="fas fa-circle text-xs mr-3 group-hover:text-cyan-400 transition-colors duration-300"></i>
+                            Binary Trading
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('spot-trading') }}" class="text-gray-400 hover:text-cyan-400 transition-colors duration-300 flex items-center group">
+                            <i class="fas fa-circle text-xs mr-3 group-hover:text-cyan-400 transition-colors duration-300"></i>
                             Spot Trading
                         </a>
                     </li>

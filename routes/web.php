@@ -21,6 +21,7 @@ use App\Http\Controllers\Cpanel\TimeSessionController;
 use App\Http\Controllers\Auth\ChangePasswordController;
 use App\Http\Controllers\User\AboutMeController;
 use App\Http\Controllers\Cpanel\KyQuyController;
+use App\Http\Controllers\SpotTradingController;
 Route::middleware('language')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('/login', [HomeController::class, 'index'])->name('login');
@@ -67,9 +68,14 @@ Route::get('/load-more-symbols', [App\Http\Controllers\SymbolController::class, 
     Route::get('/projects', [HomeController::class, 'projects'])->name('projects');
     Route::get('/market', [HomeController::class, 'market'])->name('market');
     Route::get('/load-more-trades', [HomeController::class, 'loadMoreTrades'])->name('loadMoreTrades');
-    Route::get('/load-more-deposit-history', [HomeController::class, 'loadMoreDepositHistory'])->name('loadMoreDepositHistory');
-    Route::get('/load-more-withdraw-history', [HomeController::class, 'loadMoreWithdrawHistory'])->name('loadMoreWithdrawHistory');
-});
+            Route::get('/load-more-deposit-history', [HomeController::class, 'loadMoreDepositHistory'])->name('loadMoreDepositHistory');
+        Route::get('/load-more-withdraw-history', [HomeController::class, 'loadMoreWithdrawHistory'])->name('loadMoreWithdrawHistory');
+        
+        // Spot Trading Routes
+        Route::get('/spot-trading', [SpotTradingController::class, 'index'])->name('spot-trading');
+        Route::post('/spot-trading/place-order', [SpotTradingController::class, 'placeOrder'])->name('spot-trading.place-order');
+        Route::post('/spot-trading/cancel-order/{id}', [SpotTradingController::class, 'cancelOrder'])->name('spot-trading.cancel-order');
+    });
 Route::middleware('languageAdmin')->group(function () {
     Route::group(['prefix' => 'admin', 'as' => 'cpanel.'], function () {
         Route::get('/login', [CpanelController::class, 'login'])->name('login');

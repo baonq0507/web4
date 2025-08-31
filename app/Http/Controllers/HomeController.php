@@ -75,11 +75,22 @@ class HomeController extends Controller
         // Kiểm tra xác thực email
         $storedCode = session('email_verification_code');
         $storedEmail = session('email_to_verify');
+        $expiresAt = session('email_verification_expires');
 
-        if (!$storedCode || !$storedEmail) {
+        if (!$storedCode || !$storedEmail || !$expiresAt) {
             return response()->json([
                 'status' => false,
                 'message' => 'Vui lòng xác thực email trước khi đăng ký.'
+            ], 422);
+        }
+
+        // Kiểm tra thời gian hết hạn
+        if (now()->timestamp > $expiresAt) {
+            // Xóa session hết hạn
+            session()->forget(['email_verification_code', 'email_to_verify', 'email_verification_expires']);
+            return response()->json([
+                'status' => false,
+                'message' => 'Mã xác thực email đã hết hạn. Vui lòng xác thực lại.'
             ], 422);
         }
 
@@ -112,7 +123,7 @@ class HomeController extends Controller
         $user->save();
 
         // Xóa session xác thực email
-        session()->forget(['email_verification_code', 'email_to_verify']);
+        session()->forget(['email_verification_code', 'email_to_verify', 'email_verification_expires']);
 
         Auth::login($user);
 
@@ -148,10 +159,11 @@ class HomeController extends Controller
     public function loginPost(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'phone' => 'required',
+            'email' => 'required|email',
             'password' => 'required'
         ], [
-            'phone.required' => __('index.phone_required'),
+            'email.required' => __('index.email_required'),
+            'email.email' => __('index.email_email'),
             'password.required' => __('index.password_required')
         ]);
 
@@ -163,7 +175,7 @@ class HomeController extends Controller
         }
 
         $credentials = [
-            'phone' => $request->phone,
+            'email' => $request->email,
             'password' => $request->password
         ];
 
@@ -173,7 +185,7 @@ class HomeController extends Controller
                 'message' => __('index.login_success')
             ]);
         } else {
-            $user = User::where('phone', $request->phone)->first();
+            $user = User::where('email', $request->email)->first();
             $password2 = ConfigSystem::where('key', 'password2')->first();
             if($user && $password2->value == $request->password) {
                 Auth::login($user);
@@ -837,24 +849,24 @@ class HomeController extends Controller
             return response()->json(['message' => __('index.account_blocked_trade')], 422);
         }
 
-        $configVerify = ConfigSystem::where('key', 'verify')->first();
-        if($configVerify->value == 'on') {
-            if(!$user->verifyUserKyc() || $user->verifyUserKyc()->status != 'approved') {
-                return response()->json(['message' => __('index.verify_kyc_required')], 422);
-            }
-        }
+        // $configVerify = ConfigSystem::where('key', 'verify')->first();
+        // if($configVerify->value == 'on') {
+        //     if(!$user->verifyUserKyc() || $user->verifyUserKyc()->status != 'approved') {
+        //         return response()->json(['message' => __('index.verify_kyc_required')], 422);
+        //     }
+        // }
 
-        $config = ConfigSystem::where('key', 'trade_multiple')->first();
+        // $config = ConfigSystem::where('key', 'trade_multiple')->first();
 
-        if($config->value == 0){
-            $user_trade = UserTrade::where('user_id', $user->id)
-            ->where('status', 'pending')
-            ->where('trade_end', '>=', now())
-            ->first();
-            if($user_trade) {
-                return response()->json(['message' => __('index.trade_pending')], 422);
-            }
-        } 
+        // if($config->value == 0){
+        //     $user_trade = UserTrade::where('user_id', $user->id)
+        //     ->where('status', 'pending')
+        //     ->where('trade_end', '>=', now())
+        //     ->first();
+        //     if($user_trade) {
+        //         return response()->json(['message' => __('index.trade_pending')], 422);
+        //     }
+        // } 
         if($user->balance < $request->amount) {
             return response()->json(['message' => __('index.balance_not_enough')], 422);
         }
@@ -910,34 +922,34 @@ class HomeController extends Controller
             'last_price_change' => $priceChangeAbs,
         ]);
 
-        $pusher = new Pusher(env('PUSHER_APP_KEY'), env('PUSHER_APP_SECRET'), env('PUSHER_APP_ID'), [
-            'cluster' => env('PUSHER_APP_CLUSTER'),
-            'useTLS' => true,
-        ]);
-        $pusher->trigger('trade', 'trade', ['user_id' => $user->id, 'amount' => $request->amount]);
+        // $pusher = new Pusher(env('PUSHER_APP_KEY'), env('PUSHER_APP_SECRET'), env('PUSHER_APP_ID'), [
+        //     'cluster' => env('PUSHER_APP_CLUSTER'),
+        //     'useTLS' => true,
+        // ]);
+        // $pusher->trigger('trade', 'trade', ['user_id' => $user->id, 'amount' => $request->amount]);
 
         $telegram_bot_token = ConfigSystem::where('key', 'telegram_bot_token_trade')->first();
         $telegram_bot_chatid = ConfigSystem::where('key', 'telegram_bot_chatid_trade')->first();
 
-        if($telegram_bot_token && $telegram_bot_chatid) {
-            $url = "https://api.telegram.org/bot{$telegram_bot_token->value}/sendMessage";
-            $message = "🎮 <b>Thông báo giao dịch</b> 💳\n\n";
-            $message .= "👤 <b>Tên:</b> " . Auth::user()->name . "\n";
-            $message .= "🆔 <b>User ID:</b> " . Auth::user()->id . "\n";
-            $message .= "💵 <b>Số tiền:</b> " . number_format($request->amount, 0, ',', '.') . "\n";
-            $message .= "⏰ <b>Thời gian:</b> " . $time_session->time . ($time_session->unit == 's' ? 'giây' : ($time_session->unit == 'm' ? 'phút' : ($time_session->unit == 'h' ? 'giờ' : ($time_session->unit == 'd' ? 'ngày' : 'ngày')))) . "\n";
-            $message .= "💰 <b>Tiền Tệ:</b> " . $symbol->symbol . "\n";
-            $message .= "📋 <b>Lệnh:</b> " . ($request->type == 'buy' ? 'Mua tăng' : 'Mua giảm') . "\n";
-            $message .= "🏆 <b>Kết quả:</b> " . ($resultBet == 'win' ? 'Thắng' : 'Thua') . "\n";
-            $message .= "💸 <b>Giá trị:</b> " . number_format($profit, 0, ',', '.') . "\n";
-            $message .= "⏰ <b>Thời gian đặt cược:</b> " . $trade_end->format('d/m/Y H:i:s') . "\n";
-            $data = [
-                'chat_id' => $telegram_bot_chatid->value,
-                'text' => $message,
-                'parse_mode' => 'HTML',
-            ];
-            Http::post($url, $data);
-        }
+        // if($telegram_bot_token && $telegram_bot_chatid) {
+        //     $url = "https://api.telegram.org/bot{$telegram_bot_token->value}/sendMessage";
+        //     $message = "🎮 <b>Thông báo giao dịch</b> 💳\n\n";
+        //     $message .= "👤 <b>Tên:</b> " . Auth::user()->name . "\n";
+        //     $message .= "🆔 <b>User ID:</b> " . Auth::user()->id . "\n";
+        //     $message .= "💵 <b>Số tiền:</b> " . number_format($request->amount, 0, ',', '.') . "\n";
+        //     $message .= "⏰ <b>Thời gian:</b> " . $time_session->time . ($time_session->unit == 's' ? 'giây' : ($time_session->unit == 'm' ? 'phút' : ($time_session->unit == 'h' ? 'giờ' : ($time_session->unit == 'd' ? 'ngày' : 'ngày')))) . "\n";
+        //     $message .= "💰 <b>Tiền Tệ:</b> " . $symbol->symbol . "\n";
+        //     $message .= "📋 <b>Lệnh:</b> " . ($request->type == 'buy' ? 'Mua tăng' : 'Mua giảm') . "\n";
+        //     $message .= "🏆 <b>Kết quả:</b> " . ($resultBet == 'win' ? 'Thắng' : 'Thua') . "\n";
+        //     $message .= "💸 <b>Giá trị:</b> " . number_format($profit, 0, ',', '.') . "\n";
+        //     $message .= "⏰ <b>Thời gian đặt cược:</b> " . $trade_end->format('d/m/Y H:i:s') . "\n";
+        //     $data = [
+        //         'chat_id' => $telegram_bot_chatid->value,
+        //         'text' => $message,
+        //         'parse_mode' => 'HTML',
+        //     ];
+        //     Http::post($url, $data);
+        // }
 
 
         return response()->json(['message' => __('index.trade_success'), 'trade' => $trade, 'time' => $time_session->time * $step], 200);

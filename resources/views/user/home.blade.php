@@ -742,7 +742,7 @@
 <!-- Banner Slider -->
 
 <!-- Realtime Price Ticker -->
-<div class="price-ticker py-4 overflow-hidden">
+<div class="price-ticker py-4 overflow-hidden mt-10">
     <div class="ticker-container">
         <div class="ticker-track flex animate-marquee whitespace-nowrap" id="price-ticker-track">
             <!-- Loading state -->
@@ -751,11 +751,7 @@
             </div>
         </div>
     </div>
-    <!-- Connection status indicator -->
-    <div class="absolute top-2 right-4 flex items-center space-x-2">
-        <div class="w-2 h-2 rounded-full bg-gray-400" id="connection-status"></div>
-        <span class="text-xs text-gray-400" id="connection-text">Connecting...</span>
-    </div>
+
 </div>
 
 <!-- Hidden data container for symbols -->
