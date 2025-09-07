@@ -1,6 +1,6 @@
 <header class="text-white w-full shadow fixed top-0 z-50 bg-black">
     <div class="container mx-auto px-4 md:px-6 lg:px-8 flex items-center justify-between h-16">
-        <!-- Left Side - Menu Button and Buy Coins Button -->
+        <!-- Left Side - Menu Button and Trading/NFT Buttons -->
         <div class="flex items-center space-x-6">
             <!-- Menu Button (Mobile Only) -->
             <button id="menuDrawerBtn" class="lg:hidden flex items-center justify-center w-10 h-10 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors duration-300">
@@ -8,11 +8,16 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                 </svg>
             </button>
-
-            <!-- Buy Coins Quickly Button -->
-            <!-- <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-300">
-                Buy coins quickly
-            </button> -->
+            
+            <!-- Trading/NFT Buttons (Desktop Only) -->
+            <div class="hidden lg:flex items-center bg-gray-800 rounded-lg p-1">
+                <a href="{{ route('trading') }}" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 rounded-md transition-all duration-300">
+                    Trading
+                </a>
+                <a href="{{ route('nft') }}" class="px-4 py-2 text-sm font-medium text-white bg-gray-700 rounded-md transition-all duration-300">
+                    NFT
+                </a>
+            </div>
         </div>
 
         <!-- Center - Navigation Menu (Desktop Only) -->
@@ -20,17 +25,32 @@
             <!-- Trade Dropdown -->
             <div class="relative group">
                 <button class="flex items-center space-x-1 hover:text-gray-300 transition-colors duration-300">
-                    <span>{{ __('index.trade') }}</span>
+                    <span>{{ __('index.trade_center') }}</span>
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </button>
-                <div class="absolute top-full left-0 mt-2 bg-gray-900 border border-gray-700 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 min-w-48">
-                    <a href="{{ route('trading') }}" class="block px-4 py-2 text-sm hover:bg-gray-800 transition-colors duration-300">
-                        {{ __('index.trade') }}
+                <div class="absolute top-full left-0 mt-2 bg-gray-900 border border-gray-700 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 min-w-[320px]">
+                    <a href="{{ route('trading') }}" class="flex items-start space-x-2 px-4 py-2 text-sm hover:bg-gray-800 transition-colors duration-300">
+                        <i class="fa fa-list-alt text-cyan-400 mt-1"></i>
+                        <div>
+                            <span class="font-medium">{{ __('index.feature') }}</span>
+                            <div class="text-xs text-gray-400">Futures contract trading, high leverage</div>
+                        </div>
                     </a>
-                    <a href="{{ route('market') }}" class="block px-4 py-2 text-sm hover:bg-gray-800 transition-colors duration-300">
-                        {{ __('index.market.title') }}
+                    <a href="{{ route('spot-trading') }}" class="flex items-start space-x-2 px-4 py-2 text-sm hover:bg-gray-800 transition-colors duration-300">
+                        <i class="fa fa-chart-line text-cyan-400 mt-1"></i>
+                        <div>
+                            <span class="font-medium">{{ __('index.spot_trading') }}</span>
+                            <div class="text-xs text-gray-400">Buy and sell cryptocurrencies instantly</div>
+                        </div>
+                    </a>
+                    <a href="{{ route('market') }}" class="flex items-start space-x-2 px-4 py-2 text-sm hover:bg-gray-800 transition-colors duration-300">
+                        <i class="fa fa-chart-bar text-cyan-400 mt-1"></i>
+                        <div>
+                            <span class="font-medium">{{ __('index.market.title') }}</span>
+                            <div class="text-xs text-gray-400">View market prices, latest fluctuations</div>
+                        </div>
                     </a>
                 </div>
             </div>
@@ -43,15 +63,34 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </button>
-                <div class="absolute top-full left-0 mt-2 bg-gray-900 border border-gray-700 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 min-w-48">
-                    <a href="{{ route('deposit') }}" class="block px-4 py-2 text-sm hover:bg-gray-800 transition-colors duration-300">
-                        {{ __('index.deposit') }}
+                <div class="absolute top-full left-0 mt-2 bg-gray-900 border border-gray-700 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 min-w-[280px]">
+                    <a href="{{ route('deposit') }}" class="flex items-start space-x-2 px-4 py-2 text-sm hover:bg-gray-800 transition-colors duration-300">
+                        <i class="fa fa-arrow-up text-cyan-400 mt-1"></i>
+                        <div>
+                            <span class="font-medium">{{ __('index.deposit') }}</span>
+                            <div class="text-xs text-gray-400">Deposit funds to your account quickly</div>
+                        </div>
                     </a>
-                    <a href="{{ route('withdraw') }}" class="block px-4 py-2 text-sm hover:bg-gray-800 transition-colors duration-300">
-                        {{ __('index.withdraw') }}
+                    <a href="{{ route('withdraw') }}" class="flex items-start space-x-2 px-4 py-2 text-sm hover:bg-gray-800 transition-colors duration-300">
+                        <i class="fa fa-arrow-down text-cyan-400 mt-1"></i>
+                        <div>
+                            <span class="font-medium">{{ __('index.withdraw') }}</span>
+                            <div class="text-xs text-gray-400">Withdraw to your wallet or bank</div>
+                        </div>
                     </a>
-                    <a href="{{ route('wallet') }}" class="block px-4 py-2 text-sm hover:bg-gray-800 transition-colors duration-300">
-                        {{ __('index.wallet') }}
+                    <a href="{{ route('wallet') }}" class="flex items-start space-x-2 px-4 py-2 text-sm hover:bg-gray-800 transition-colors duration-300">
+                        <i class="fa fa-bank text-cyan-400 mt-1"></i>
+                        <div>
+                            <span class="font-medium">{{ __('index.wallet') }}</span>
+                            <div class="text-xs text-gray-400">Manage your assets and balances</div>
+                        </div>
+                    </a>
+                    <a href="{{ route('transfer') }}" class="flex items-start space-x-2 px-4 py-2 text-sm hover:bg-gray-800 transition-colors duration-300">
+                        <i class="fas fa-exchange-alt text-cyan-400 mt-1"></i>
+                        <div>
+                            <span class="font-medium">Transfer</span>
+                            <div class="text-xs text-gray-400">Chuyển đổi giữa Spot và Wallet</div>
+                        </div>
                     </a>
                 </div>
             </div>
@@ -64,27 +103,46 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </button>
-                <div class="absolute top-full left-0 mt-2 bg-gray-900 border border-gray-700 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 min-w-48">
-                    <a href="{{ route('bitget.earning') }}" class="block px-4 py-2 text-sm hover:bg-gray-800 transition-colors duration-300">
-                        {{ __('index.bitget_earning.title') }}
+                <div class="absolute top-full left-0 mt-2 bg-gray-900 border border-gray-700 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 min-w-[280px]">
+                    <a href="{{ route('market') }}" class="flex items-start space-x-2 px-4 py-2 text-sm hover:bg-gray-800 transition-colors duration-300">
+                        <i class="fa fa-arrow-up text-cyan-400 mt-1"></i>
+                        <div>
+                            <span class="font-medium">Market Trend</span>
+                            <div class="text-xs text-gray-400">Update the latest market trends</div>
+                        </div>
                     </a>
-                    <a href="{{ route('overview') }}" class="block px-4 py-2 text-sm hover:bg-gray-800 transition-colors duration-300">
-                        {{ __('index.copy_trading.title') }}
+                    <a href="{{ route('news') }}" class="flex items-start space-x-2 px-4 py-2 text-sm hover:bg-gray-800 transition-colors duration-300">
+                        <i class="fa fa-newspaper text-cyan-400 mt-1"></i>
+                        <div>
+                            <span class="font-medium">Tin Tức</span>
+                            <div class="text-xs text-gray-400">Tin tức và sự kiện crypto nổi bật</div>
+                        </div>
+                    </a>
+                    <a href="/" class="flex items-start space-x-2 px-4 py-2 text-sm hover:bg-gray-800 transition-colors duration-300">
+                        <i class="fa fa-bank text-cyan-400 mt-1"></i>
+                        <div>
+                            <span class="font-medium">Charity</span>
+                            <div class="text-xs text-gray-400">Charity activities, community contributions</div>
+                        </div>
                     </a>
                 </div>
             </div>
 
-            <!-- Event Hall Dropdown -->
+            <!-- Event hail Dropdown -->
             <div class="relative group">
                 <button class="flex items-center space-x-1 hover:text-gray-300 transition-colors duration-300">
-                    <span>Event Hall</span>
+                    <span>Event hail</span>
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </button>
-                <div class="absolute top-full left-0 mt-2 bg-gray-900 border border-gray-700 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 min-w-48">
-                    <a href="{{ route('ky-quy') }}" class="block px-4 py-2 text-sm hover:bg-gray-800 transition-colors duration-300">
-                        {{ __('index.ky_quy') }}
+                <div class="absolute top-full left-0 mt-2 bg-gray-900 border border-gray-700 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 min-w-[240px]">
+                    <a href="{{ route('invitation') }}" class="flex items-start space-x-2 px-4 py-2 text-sm hover:bg-gray-800 transition-colors duration-300">
+                        <i class="fa fa-share text-cyan-400 mt-1"></i>
+                        <div>
+                            <span class="font-medium">Share</span>
+                            <div class="text-xs text-gray-400">Share events, receive attractive rewards</div>
+                        </div>
                     </a>
                 </div>
             </div>
@@ -102,19 +160,55 @@
             @else
             <!-- Login/Register Buttons -->
             <div class="flex items-center space-x-3">
-                <button id="btnLogin" class="bg-transparent border border-white text-white px-2 py-2 rounded-lg font-medium hover:bg-white hover:text-black transition-all duration-300 text-sm md:text-base md:px-4 md:py-2">
+                <a href="{{ route('login') }}" class="bg-transparent border border-white text-white px-2 py-2 rounded-lg font-medium hover:bg-white hover:text-black transition-all duration-300 text-sm md:text-base md:px-4 md:py-2">
                     {{ __('index.login') }}
-                </button>
-                <button id="btnRegister" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-2 rounded-lg font-medium transition-colors duration-300 text-sm md:text-base md:px-4 md:py-2">
+                </a>
+                <a href="{{ route('register') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-2 rounded-lg font-medium transition-colors duration-300 text-sm md:text-base md:px-4 md:py-2">
                     {{ __('index.register') }}
-                </button>
+                </a>
             </div>
             @endif
 
-            <!-- Customer Service Button -->
-            <button class="cursor-pointer inline-flex items-center justify-center rounded-full bg-gray-800 text-white hover:bg-gray-700 focus:outline-none w-10 h-10 transition-colors duration-300 cskh">
-                <i class="fa fa-headset text-lg"></i>
-            </button>
+            <!-- Customer Service Dropdown -->
+            <div class="relative group">
+                <button id="customerServiceBtn" class="cursor-pointer inline-flex items-center justify-center rounded-full bg-gray-800 text-white hover:bg-gray-700 focus:outline-none w-10 h-10 transition-colors duration-300">
+                    <i class="fa fa-headset text-lg"></i>
+                </button>
+                <div id="customerServiceDropdown" class="absolute top-full right-0 mt-2 bg-gray-900 border border-gray-700 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 min-w-48 z-50">
+                    <a href="{{ config('telegram_url') }}" target="_blank" class="flex items-center space-x-2 px-4 py-2 text-sm hover:bg-gray-800 transition-colors duration-300">
+                        <i class="fab fa-telegram text-cyan-400"></i>
+                        <span>Telegram</span>
+                    </a>
+                    <a href="{{ config('whatsapp_url') }}" target="_blank" class="flex items-center space-x-2 px-4 py-2 text-sm hover:bg-gray-800 transition-colors duration-300">
+                        <i class="fab fa-whatsapp text-green-400"></i>
+                        <span>WhatsApp</span>
+                    </a>
+                </div>
+            </div>
+            <div class="relative group">
+                <button id="walletBtn" class="cursor-pointer inline-flex items-center justify-center rounded-full bg-gray-800 text-white hover:bg-gray-700 focus:outline-none w-10 h-10 transition-colors duration-300">
+                    <i class="fa fa-wallet text-lg"></i>
+                </button>
+
+                <!-- //dropdown nạp tiền, rút tiền, chuyển đổi tiền tệ -->
+                <div id="walletDropdown" class="absolute top-full right-0 mt-2 bg-gray-900 border border-gray-700 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 min-w-48 z-50">
+                    <a href="{{ route('deposit') }}" class="flex items-center space-x-2 px-4 py-2 text-sm hover:bg-gray-800 transition-colors duration-300">
+                        <i class="fa fa-wallet text-cyan-400 mt-1"></i>
+                        <span>{{ __('index.deposit') }}</span>
+                    </a>
+                    <a href="{{ route('withdraw') }}" class="flex items-center space-x-2 px-4 py-2 text-sm hover:bg-gray-800 transition-colors duration-300">
+                        <i class="fa fa-wallet text-cyan-400 mt-1"></i>
+                        <span>{{ __('index.withdraw') }}</span>
+                    </a>
+                    <a href="{{ route('transfer') }}" class="flex items-start space-x-2 px-4 py-2 text-sm hover:bg-gray-800 transition-colors duration-300">
+                        <i class="fas fa-exchange-alt text-cyan-400 mt-1"></i>
+                        <div>
+                            <span class="font-medium">Transfer</span>
+                            <div class="text-xs text-gray-400">Chuyển đổi giữa Spot và Wallet</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
 
             <!-- Language Dropdown -->
             <div class="relative hidden md:block">
@@ -151,6 +245,8 @@
                     </div>
                 </div>
             </div>
+
+
         </div>
     </div>
 
@@ -165,77 +261,66 @@
         </div>
         
         <div class="p-6 space-y-6">
-            <!-- Main Navigation -->
-            <div class="space-y-4">
-                <h3 class="text-lg font-bold text-white   pb-2">Main Menu</h3>
-                
-                <!-- Trade Section -->
-                <div class="space-y-2">
-                    <h4 class=" font-semibold text-sm uppercase tracking-wider">{{ __('index.trade') }}</h4>
-                    <div class="space-y-1 ml-4">
-                        <a href="{{ route('trading') }}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
-                            <i class="fa fa-chart-line text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
-                            <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">{{ __('index.trade') }}</span>
-                        </a>
-                        <a href="{{ route('market') }}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
-                            <i class="fa fa-chart-bar text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
-                            <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">{{ __('index.market.title') }}</span>
-                        </a>
-                    </div>
-                </div>
-                <!-- Finance Section -->
-                 @if(Auth::check())
-                <div class="space-y-2">
-                    <h4 class="text-cyan-400 font-semibold text-sm uppercase tracking-wider">Finance</h4>
-                    <div class="space-y-1 ml-4">
-                        <a href="{{ route('deposit') }}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
-                            <i class="fa fa-arrow-up text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
-                            <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">{{ __('index.deposit') }}</span>
-                        </a>
-                        <a href="{{ route('withdraw') }}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
-                            <i class="fa fa-arrow-down text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
-                            <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">{{ __('index.withdraw') }}</span>
-                        </a>
-                        <a href="{{ route('wallet') }}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
-                            <i class="fa fa-wallet text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
-                            <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">{{ __('index.wallet') }}</span>
-                        </a>
-                    </div>
-                </div>
-                @endif
-
-                <!-- Event Hall Section -->
-                <!-- <div class="space-y-2">
-                    <h4 class="text-cyan-400 font-semibold text-sm uppercase tracking-wider">Event Hall</h4>
-                    <div class="space-y-1 ml-4">
-                        <a href="{{ route('ky-quy') }}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
-                            <i class="fa fa-gift text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
-                            <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">{{ __('index.ky_quy') }}</span>
-                        </a>
-                    </div>
-                </div> -->
+            <!-- Trading/NFT Buttons (Mobile) -->
+            @php
+                $routeName = \Request::route() ? \Request::route()->getName() : '';
+            @endphp
+            <div class="flex items-center bg-gray-800 rounded-lg p-1 mb-4">
+                <a href="{{ route('trading') }}"
+                   class="flex-1 px-4 py-2 text-sm font-medium rounded-md transition-all duration-300 text-center
+                   {{ $routeName === 'trading' ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    Trading
+                </a>
+                <a href="{{ route('nft') }}"
+                   class="flex-1 px-4 py-2 text-sm font-medium rounded-md transition-all duration-300 text-center
+                   {{ $routeName === 'nft' ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    NFT
+                </a>
             </div>
-
+            
             <!-- Mobile Navigation Links -->
             <div class="space-y-4 pt-4 border-t ">
                 <h3 class="text-lg font-bold text-white   pb-2">Quick Access</h3>
                 
-                <div class="grid grid-cols-2 gap-3">
-                    <a href="{{ route('home') }}" class="flex flex-col items-center p-3 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
-                        <i class="fa fa-home text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300 text-xl mb-1"></i>
-                        <span class="text-white group-hover:text-cyan-300 transition-colors duration-300 text-xs">{{ __('index.home.home') }}</span>
+                <div class="space-y-2">
+                    <a href="{{ route('home') }}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
+                        <i class="fa fa-home text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
+                        <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">{{ __('index.home.home') }}</span>
                     </a>
-                    <a href="{{ route('market') }}" class="flex flex-col items-center p-3 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
-                        <i class="fa fa-chart-line text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300 text-xl mb-1"></i>
-                        <span class="text-white group-hover:text-cyan-300 transition-colors duration-300 text-xs">{{ __('index.market.title') }}</span>
+                    <a href="{{ route('spot-trading') }}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
+                        <i class="fa fa-chart-line text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
+                        <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">{{ __('index.spot_trading') }}</span>
                     </a>
-                    <a href="{{ route('trading') }}" class="flex flex-col items-center p-3 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
-                        <img src="{{ asset('images/app/' . config('app_logo')) }}" class="w-6 h-6 rounded-full mb-1">
-                        <span class="text-white group-hover:text-cyan-300 transition-colors duration-300 text-xs">{{ __('index.trade') }}</span>
+                    {{-- <a href="{{ route('trading-contracts') }}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
+                        <i class="fa fa-file-contract text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
+                        <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">Trading Contracts</span>
+                    </a> --}}
+                    <a href="{{ route('market') }}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
+                        <i class="fa fa-chart-bar text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
+                        <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">{{ __('index.market.title') }}</span>
                     </a>
-                    <a href="{{ route('wallet') }}" class="flex flex-col items-center p-3 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
-                        <i class="fa fa-bank text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300 text-xl mb-1"></i>
-                        <span class="text-white group-hover:text-cyan-300 transition-colors duration-300 text-xs">{{ __('index.wallet') }}</span>
+                    <a href="{{ route('news') }}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
+                        <i class="fa fa-newspaper text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
+                        <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">Tin Tức</span>
+                    </a>
+                    <a href="{{ route('trading') }}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
+                        {{-- <img src="{{ asset('images/app/' . config('app_logo')) }}" class="w-5 h-5 rounded-full"> --}}
+                        <i class="fa fa-list-alt text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
+                        <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">features</span>
+                    </a>
+                    <a href="#"  class="flex items-center space-x-3 p-2 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
+                        <i class="fa fa-bank text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
+                        <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">{{ __('index.wallet') }}</span>
+                    </a>
+                    @if(config('disabled_referal') == 'on')
+                    <a href="{{ route('invitation') }}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
+                        <i class="fa fa-gift text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
+                        <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">Invitation</span>
+                    </a>
+                    @endif
+                    <a href="#" id="languageBtn1" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
+                        <i class="fa fa-globe text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
+                        <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">{{ __('index.language') }}</span>
                     </a>
                 </div>
             </div>
@@ -300,7 +385,7 @@
     <!-- Profile Drawer (Keep existing code) -->
     @if(Auth::check())
     <div id="profileDrawer" class="fixed top-0 right-[-12px] h-full bg-gradient-to-b from-[#1a1a2e] to-[#0f0f23] text-white shadow-2xl transform translate-x-full transition-transform duration-300 overflow-y-auto border-l " style="z-index: 1000; width: 350px;">
-        <div class="p-6 flex justify-between items-center  ">
+        <div class="px-6 py-3 flex justify-between items-center  ">
             <span class="text-xl font-bold text-cyan-400">{{ Auth::user()->name }}</span>
             <button id="closeDrawerBtn" class="text-cyan-400 hover:text-red-500 text-2xl leading-none transition-colors duration-300">&times;</button>
         </div>
@@ -394,6 +479,10 @@
                 </a>
                 
                 @if(config('disabled_referal') == 'on')
+                <a href="{{ route('invitation') }}" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-cyan-500/10 transition-colors duration-300 group">
+                    <i class="fa fa-gift text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
+                    <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">Invitation</span>
+                </a>
                 <a href="{{ route('referred-users') }}" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-cyan-500/10 transition-colors duration-300 group">
                     <i class="fa fa-user-friends text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
                     <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">{{ __('index.referral_users') }}</span>
@@ -447,25 +536,29 @@
 
     <!-- Mobile Navigation -->
     <nav class="text-xl md:hidden fixed bottom-0 left-0 right-0 bg-black text-white flex justify-between items-center py-3 z-50 border-t border-gray-700">
-        <a href="{{ route('home') }}" class="hover:text-gray-300 text-center flex flex-col items-center w-1/5 transition-colors duration-300">
+        <a href="{{ route('home') }}" class="hover:text-gray-300 text-center flex flex-col items-center w-1/6 transition-colors duration-300">
             <i class="fa fa-home mb-1 text-lg"></i>
             <span class="text-xs">{{ __('index.home.home') }}</span>
         </a>
-        <a href="{{ route('market') }}" class="hover:text-gray-300 text-center flex flex-col items-center w-1/5 transition-colors duration-300">
+        <a href="{{ route('market') }}" class="hover:text-gray-300 text-center flex flex-col items-center w-1/6 transition-colors duration-300">
             <i class="fa fa-chart-line mb-1 text-lg"></i>
             <span class="text-xs">{{ __('index.market.title') }}</span>
         </a>
-        <a href="{{ route('trading') }}" class="hover:text-gray-300 text-center flex flex-col items-center w-1/5 transition-colors duration-300">
+        <a href="{{ route('trading') }}" class="hover:text-gray-300 text-center flex flex-col items-center w-1/6 transition-colors duration-300">
             <div class="flex items-center justify-center space-x-2 flex-col">
-                <img src="{{ asset('images/app/' . config('app_logo')) }}" class="w-8 h-8 rounded-full">
+                <img src="{{ asset('images/app/' . config('app_logo')) }}" class="h-8 rounded-full">
                 <span class="text-xs">{{ __('index.trade') }}</span>
             </div>
         </a>
-        <a href="{{ route('wallet') }}" class="hover:text-gray-300 text-center flex flex-col items-center w-1/5 transition-colors duration-300">
+        <a href="{{ route('wallet') }}" class="hover:text-gray-300 text-center flex flex-col items-center w-1/6 transition-colors duration-300">
             <i class="fa fa-bank mb-1 text-lg"></i>
             <span class="text-xs">{{ __('index.wallet') }}</span>
         </a>
-        <a href="#" class="hover:text-gray-300 text-center flex flex-col items-center w-1/5 transition-colors duration-300" id="profileDrawerBtn1">
+        <a href="{{ route('transfer') }}" class="hover:text-gray-300 text-center flex flex-col items-center w-1/6 transition-colors duration-300">
+            <i class="fas fa-exchange-alt mb-1 text-lg"></i>
+            <span class="text-xs">Transfer</span>
+        </a>
+        <a href="#" class="hover:text-gray-300 text-center flex flex-col items-center w-1/6 transition-colors duration-300" id="profileDrawerBtn1">
             <i class="fa fa-user mb-1 text-lg"></i>
             <span class="text-xs">{{ __('index.profile') }}</span>
         </a>
@@ -507,7 +600,7 @@
 </div>
 
 <!-- Modal Đăng Ký -->
-<div id="registerModal" class="fixed inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm z-50 hidden">
+{{-- <div id="registerModal" class="fixed inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm z-50 hidden">
     <div class="bg-gradient-to-b from-[#1a1a2e] to-[#0f0f23] rounded-2xl p-8 w-full max-w-md relative border  shadow-2xl">
         <button id="btnCloseRegister" class="absolute top-4 right-4 text-gray-400 hover:text-red-400 transition-colors duration-300">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
@@ -583,7 +676,7 @@
             </button>
         </form>
     </div>
-</div>
+</div> --}}
 @endif
 
 <script>
@@ -612,6 +705,103 @@
         const profileDrawerBtn1 = document.getElementById('profileDrawerBtn1');
         const closeDrawerBtn = document.getElementById('closeDrawerBtn');
         const profileDrawer = document.getElementById('profileDrawer');
+        const walletBtn = document.getElementById('walletBtn');
+        const walletDropdown = document.getElementById('walletDropdown');
+        // Trading/NFT Button functionality
+        function initTradingNftButtons() {
+            // Desktop buttons
+            const desktopTradingBtn = document.querySelector('.hidden.lg\\:flex a[href="{{ route('trading') }}"]');
+            const desktopNftBtn = document.querySelector('.hidden.lg\\:flex a[href="#"]');
+            
+            // Mobile buttons
+            const mobileTradingBtn = document.querySelector('.flex.items-center.bg-gray-800 a[href="{{ route('trading') }}"]');
+            const mobileNftBtn = document.querySelector('.flex.items-center.bg-gray-800 a[href="#"]');
+            
+            function setActiveButton(activeBtn, inactiveBtn) {
+                // Set active button
+                activeBtn.classList.remove('text-gray-300', 'hover:bg-gray-700');
+                activeBtn.classList.add('text-white', 'bg-gray-700');
+                
+                // Set inactive button
+                inactiveBtn.classList.remove('text-white', 'bg-gray-700');
+                inactiveBtn.classList.add('text-gray-300', 'hover:bg-gray-700');
+            }
+            
+            // Desktop button events
+            if (desktopTradingBtn && desktopNftBtn) {
+                desktopTradingBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    setActiveButton(desktopTradingBtn, desktopNftBtn);
+                    // Also update mobile buttons
+                    if (mobileTradingBtn && mobileNftBtn) {
+                        setActiveButton(mobileTradingBtn, mobileNftBtn);
+                    }
+                });
+                
+                desktopNftBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    setActiveButton(desktopNftBtn, desktopTradingBtn);
+                    // Also update mobile buttons
+                    if (mobileTradingBtn && mobileNftBtn) {
+                        setActiveButton(mobileNftBtn, mobileTradingBtn);
+                    }
+                });
+            }
+            
+            // Mobile button events
+            if (mobileTradingBtn && mobileNftBtn) {
+                mobileTradingBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    setActiveButton(mobileTradingBtn, mobileNftBtn);
+                    // Also update desktop buttons
+                    if (desktopTradingBtn && desktopNftBtn) {
+                        setActiveButton(desktopTradingBtn, desktopNftBtn);
+                    }
+                });
+                
+                mobileNftBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    setActiveButton(mobileNftBtn, mobileTradingBtn);
+                    // Also update desktop buttons
+                    if (desktopTradingBtn && desktopNftBtn) {
+                        setActiveButton(desktopNftBtn, desktopTradingBtn);
+                    }
+                });
+            }
+        }
+        
+        // Initialize trading/NFT buttons
+        initTradingNftButtons();
+        
+        // Customer Service Dropdown functionality
+        const customerServiceBtn = document.getElementById('customerServiceBtn');
+        const customerServiceDropdown = document.getElementById('customerServiceDropdown');
+
+        // Toggle customer service dropdown
+        if (customerServiceBtn && customerServiceDropdown) {
+            customerServiceBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const isVisible = customerServiceDropdown.classList.contains('opacity-100');
+                
+                if (isVisible) {
+                    customerServiceDropdown.classList.remove('opacity-100', 'visible');
+                    customerServiceDropdown.classList.add('opacity-0', 'invisible');
+                } else {
+                    customerServiceDropdown.classList.remove('opacity-0', 'invisible');
+                    customerServiceDropdown.classList.add('opacity-100', 'visible');
+                }
+            });
+        }
+
+        // Close customer service dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (customerServiceDropdown && customerServiceBtn && 
+                !customerServiceDropdown.contains(event.target) && 
+                !customerServiceBtn.contains(event.target)) {
+                customerServiceDropdown.classList.remove('opacity-100', 'visible');
+                customerServiceDropdown.classList.add('opacity-0', 'invisible');
+            }
+        });
 
         // Open menu drawer
         if (menuDrawerBtn) {
@@ -639,7 +829,7 @@
             }
         });
 
-        // Profile drawer functionality (existing)
+        // Profile drawer functionality
         if (profileDrawerBtn) {
             profileDrawerBtn.addEventListener('click', function() {
                 profileDrawer.classList.remove('translate-x-full');
@@ -670,5 +860,14 @@
                 }
             }
         });
+
+
+        // Wallet dropdown functionality
+        if (walletBtn) {
+            walletBtn.addEventListener('click', function() {
+                walletDropdown.classList.remove('translate-x-full');
+                walletDropdown.classList.add('translate-x-0');
+            });
+        }
     });
 </script>

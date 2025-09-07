@@ -400,7 +400,7 @@
                 $('#loginModal').removeClass('hidden');
             });
 
-            $('#btnRegister, .btn-register').on('click', function() {
+            $('#btnRegister, .btn-register, #btnRegister1').on('click', function() {
                 $('.captcha-img').attr('src', '{{ captcha_src() }}' + '?' + Math.random());
                 $('#registerModal').removeClass('hidden');
             });
@@ -414,7 +414,8 @@
             });
 
             // Xử lý sự kiện click cho languageBtn
-            $('#languageBtn').on('click', function() {
+            $('#languageBtn, #languageBtn1').on('click', function(e) {
+                e.preventDefault();
                 $('#languageModal').removeClass('hidden');
             });
 
@@ -422,116 +423,118 @@
                 $('#languageModal').addClass('hidden');
             });
 
-            $('#formRegister').on('submit', function(e) {
-                e.preventDefault();
-                var form = $(this);
-                form.find('button[type="submit"]').prop('disabled', true);
-                form.find('button[type="submit"]').html("<i class='fa fa-spinner fa-spin'></i> {{ __('index.loading') }}");
+            // $('#formRegister').on('submit', function(e) {
+            //     e.preventDefault();
+            //     var form = $(this);
+            //     form.find('button[type="submit"]').prop('disabled', true);
+            //     form.find('button[type="submit"]').html("<i class='fa fa-spinner fa-spin'></i> {{ __('index.loading') }}");
 
-                $.ajax({
-                    url: form.attr('action'),
-                    type: form.attr('method'),
-                    data: form.serialize(),
-                    success: function(response) {
-                        if (response.status) {
-                            // Swal.fire({
-                            //     icon: 'success',
-                            //     title: "{{ __('index.register_success') }}",
-                            //     text: response.message,
-                            //     showConfirmButton: false,
-                            //     timer: 1500
-                            // }).then(function() {
-                            //     window.location.reload();
-                            // });
-                            Toastify({
-                                text: response.message,
-                                duration: 3000,
-                                gravity: "top",
-                                style: {
-                                    background: "linear-gradient(to right, #3ddeea, #3ddeea)",
-                                }
-                            }).showToast();
-                            setTimeout(function() {
-                                window.location.reload();
-                            }, 1500);
-                        } else {
-                            Toastify({
-                                text: response.message,
-                                duration: 3000,
-                                gravity: "top",
-                                style: {
-                                    background: "linear-gradient(to right, #ff0000, #ff0000)",
-                                }
-                            }).showToast();
-                        }
-                    },
-                    error: function(response) {
-                        Toastify({
-                            text: response.responseJSON.message,
-                            duration: 3000,
-                            gravity: "top",
-                            style: {
-                                background: "linear-gradient(to right, #ff0000, #ff0000)",
-                            }
-                        }).showToast();
-                    },
-                    complete: function() {
-                        form.find('button[type="submit"]').prop('disabled', false);
-                        form.find('button[type="submit"]').html("{{ __('index.register') }}");
-                    }
-                });
-            });
+            //     $.ajax({
+            //         url: form.attr('action'),
+            //         type: form.attr('method'),
+            //         data: form.serialize(),
+            //         success: function(response) {
+            //             if (response.status) {
+            //                 // Swal.fire({
+            //                 //     icon: 'success',
+            //                 //     title: "{{ __('index.register_success') }}",
+            //                 //     text: response.message,
+            //                 //     showConfirmButton: false,
+            //                 //     timer: 1500
+            //                 // }).then(function() {
+            //                 //     window.location.reload();
+            //                 // });
+            //                 Toastify({
+            //                     text: response.message,
+            //                     duration: 3000,
+            //                     gravity: "top",
+            //                     style: {
+            //                         background: "linear-gradient(to right, #3ddeea, #3ddeea)",
+            //                     }
+            //                 }).showToast();
+            //                 setTimeout(function() {
+            //                     window.location.reload();
+            //                 }, 1500);
+            //             } else {
+            //                 Toastify({
+            //                     text: response.message,
+            //                     duration: 3000,
+            //                     gravity: "top",
+            //                     style: {
+            //                         background: "linear-gradient(to right, #ff0000, #ff0000)",
+            //                     }
+            //                 }).showToast();
+            //             }
+            //         },
+            //         error: function(response) {
+            //             Toastify({
+            //                 text: response.responseJSON.message,
+            //                 duration: 3000,
+            //                 gravity: "top",
+            //                 style: {
+            //                     background: "linear-gradient(to right, #ff0000, #ff0000)",
+            //                 }
+            //             }).showToast();
+            //             $('#captchaImg').attr('src', '{{ captcha_src() }}' + '?' + Math.random());
+            //         },
+            //         complete: function() {
+            //             form.find('button[type="submit"]').prop('disabled', false);
+            //             form.find('button[type="submit"]').html("{{ __('index.register') }}");
+            //         }
+            //     });
+            // });
 
-            $('#formLogin').on('submit', function(e) {
-                e.preventDefault();
-                var form = $(this);
-                form.find('button[type="submit"]').prop('disabled', true);
-                form.find('button[type="submit"]').html("<i class='fa fa-spinner fa-spin'></i> {{ __('index.loading') }}");
+            // $('#formLogin').on('submit', function(e) {
+            //     e.preventDefault();
+            //     var form = $(this);
+            //     form.find('button[type="submit"]').prop('disabled', true);
+            //     form.find('button[type="submit"]').html("<i class='fa fa-spinner fa-spin'></i> {{ __('index.loading') }}");
 
-                $.ajax({
-                    url: form.attr('action'),
-                    type: form.attr('method'),
-                    data: form.serialize(),
-                    success: function(response) {
-                        if (response.status) {
-                            Toastify({
-                                text: response.message,
-                                duration: 3000,
-                                gravity: "top",
-                                style: {
-                                    background: "linear-gradient(to right, #3ddeea, #3ddeea)",
-                                }
-                            }).showToast();
-                            setTimeout(function() {
-                                window.location.reload();
-                            }, 1500);
-                        } else {
-                            Toastify({
-                                text: response.message,
-                                duration: 3000,
-                                gravity: "top",
-                                style: {
-                                    background: "linear-gradient(to right, #ff0000, #ff0000)",
-                                }
-                            }).showToast();
-                        }
-                    },
-                    error: function(response) {
-                        Toastify({
-                            text: response.responseJSON.message,
-                            duration: 3000,
-                            gravity: "top",
-                            style: {
-                                background: "linear-gradient(to right, #ff0000, #ff0000)",
-                            }
-                        }).showToast();
-                    },
-                    complete: function() {
-                        form.find('button[type="submit"]').prop('disabled', false);
-                        form.find('button[type="submit"]').html("{{ __('index.login') }}");
-                    }
-                });
-            });
+            //     $.ajax({
+            //         url: form.attr('action'),
+            //         type: form.attr('method'),
+            //         data: form.serialize(),
+            //         success: function(response) {
+            //             if (response.status) {
+            //                 Toastify({
+            //                     text: response.message,
+            //                     duration: 3000,
+            //                     gravity: "top",
+            //                     style: {
+            //                         background: "linear-gradient(to right, #3ddeea, #3ddeea)",
+            //                     }
+            //                 }).showToast();
+            //                 setTimeout(function() {
+            //                     window.location.reload();
+            //                 }, 1500);
+            //             } else {
+            //                 Toastify({
+            //                     text: response.message,
+            //                     duration: 3000,
+            //                     gravity: "top",
+            //                     style: {
+            //                         background: "linear-gradient(to right, #ff0000, #ff0000)",
+            //                     }
+            //                 }).showToast();
+            //             }
+            //         },
+            //         error: function(response) {
+            //             Toastify({
+            //                 text: response.responseJSON.message,
+            //                 duration: 3000,
+            //                 gravity: "top",
+            //                 style: {
+            //                     background: "linear-gradient(to right, #ff0000, #ff0000)",
+            //                 }
+            //             }).showToast();
+            //             $('#captchaImg').attr('src', '{{ captcha_src() }}' + '?' + Math.random());
+            //         },
+            //         complete: function() {
+            //             form.find('button[type="submit"]').prop('disabled', false);
+            //             form.find('button[type="submit"]').html("{{ __('index.login') }}");
+            //         }
+            //     });
+            // });
 
             $('#profileDrawerBtn, #profileDrawerBtn1').on('click', function() {
                 $('#profileDrawer').removeClass('translate-x-full').addClass('translate-x-0');
@@ -825,6 +828,7 @@
                                     background: "linear-gradient(to right, #ff0000, #ff0000)",
                                 }
                             }).showToast();
+                            $('#captchaImg').attr('src', '{{ captcha_src() }}' + '?' + Math.random());
                         } else {
                             alert(message);
                         }
@@ -851,6 +855,7 @@
                                 background: "linear-gradient(to right, #ff0000, #ff0000)",
                             }
                         }).showToast();
+                        $('#captchaImg').attr('src', '{{ captcha_src() }}' + '?' + Math.random());
                     } else {
                         alert("Vui lòng nhập mã xác thực");
                     }
@@ -860,110 +865,44 @@
                 const btn = $(this);
                 btn.prop('disabled', true);
                 btn.html("<i class='fa fa-spinner fa-spin'></i> Đang xác thực...");
-
-                $.ajax({
-                    url: "{{ route('verify.email.code') }}",
-                    type: 'POST',
-                    data: {
-                        email: email,
-                        verification_code: code,
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        if (response.status) {
-                            if (typeof Toastify !== 'undefined') {
-                                Toastify({
-                                    text: response.message,
-                                    duration: 3000,
-                                    gravity: "top",
-                                    style: {
-                                        background: "linear-gradient(to right, #3ddeea, #3ddeea)",
-                                    }
-                                }).showToast();
-                            } else {
-                                alert(response.message);
-                            }
-                            
-                            emailVerified = true;
-                            verifiedEmail = email;
-                            $('#verificationStatus').html('<span class="text-green-400"><i class="fa fa-check-circle"></i> Email đã được xác thực thành công!</span>');
-                            $('#email').prop('readonly', true);
-                            $('#sendVerificationBtn').prop('disabled', true);
-                            $('#verification_code').prop('readonly', true);
-                            $('#verifyCodeBtn').prop('disabled', true);
-                        } else {
-                            if (typeof Toastify !== 'undefined') {
-                                Toastify({
-                                    text: response.message,
-                                    duration: 3000,
-                                    gravity: "top",
-                                    style: {
-                                        background: "linear-gradient(to right, #ff0000, #ff0000)",
-                                    }
-                                }).showToast();
-                            } else {
-                                alert(response.message);
-                            }
-                        }
-                    },
-                    error: function(response) {
-                        const message = response.responseJSON?.message || 'Có lỗi xảy ra';
-                        if (typeof Toastify !== 'undefined') {
-                            Toastify({
-                                text: message,
-                                duration: 3000,
-                                gravity: "top",
-                                style: {
-                                    background: "linear-gradient(to right, #ff0000, #ff0000)",
-                                }
-                            }).showToast();
-                        } else {
-                            alert(message);
-                        }
-                    },
-                    complete: function() {
-                        btn.prop('disabled', false);
-                        btn.html("Xác thực");
-                    }
-                });
             });
 
             // Prevent form submission if email not verified
-            $('#formRegister').on('submit', function(e) {
-                if (!emailVerified) {
-                    e.preventDefault();
-                    if (typeof Toastify !== 'undefined') {
-                        Toastify({
-                            text: "Vui lòng xác thực email trước khi đăng ký",
-                            duration: 3000,
-                            gravity: "top",
-                            style: {
-                                background: "linear-gradient(to right, #ff0000, #ff0000)",
-                            }
-                        }).showToast();
-                    } else {
-                        alert("Vui lòng xác thực email trước khi đăng ký");
-                    }
-                    return false;
-                }
+            // $('#formRegister').on('submit', function(e) {
+            //     if (!emailVerified) {
+            //         e.preventDefault();
+            //         if (typeof Toastify !== 'undefined') {
+            //             Toastify({
+            //                 text: "Vui lòng xác thực email trước khi đăng ký",
+            //                 duration: 3000,
+            //                 gravity: "top",
+            //                 style: {
+            //                     background: "linear-gradient(to right, #ff0000, #ff0000)",
+            //                 }
+            //             }).showToast();
+            //         } else {
+            //             alert("Vui lòng xác thực email trước khi đăng ký");
+            //         }
+            //         return false;
+            //     }
                 
-                if ($('#email').val() !== verifiedEmail) {
-                    e.preventDefault();
-                    if (typeof Toastify !== 'undefined') {
-                        Toastify({
-                            text: "Email không khớp với email đã xác thực",
-                            duration: 3000,
-                            gravity: "top",
-                            style: {
-                                background: "linear-gradient(to right, #ff0000, #ff0000)",
-                            }
-                        }).showToast();
-                    } else {
-                        alert("Email không khớp với email đã xác thực");
-                    }
-                    return false;
-                }
-            });
+            //     if ($('#email').val() !== verifiedEmail) {
+            //         e.preventDefault();
+            //         if (typeof Toastify !== 'undefined') {
+            //             Toastify({
+            //                 text: "Email không khớp với email đã xác thực",
+            //                 duration: 3000,
+            //                 gravity: "top",
+            //                 style: {
+            //                     background: "linear-gradient(to right, #ff0000, #ff0000)",
+            //                 }
+            //             }).showToast();
+            //         } else {
+            //             alert("Email không khớp với email đã xác thực");
+            //         }
+            //         return false;
+            //     }
+            // });
 
             // Debug: Kiểm tra xem button có được tìm thấy không
             console.log('Email verification script loaded');

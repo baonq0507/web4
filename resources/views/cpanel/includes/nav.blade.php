@@ -79,6 +79,12 @@
                         <span class="nav-main-link-name">{{ __('index.transaction') }}</span>
                     </a>
                 </li>
+                <li class="nav-main-item">
+                    <a class="nav-main-link {{ request()->is('admin/transfers*') ? 'active' : '' }}" href="{{ route('cpanel.transfers.index') }}">
+                        <i class="nav-main-link-icon fas fa-exchange-alt"></i>
+                        <span class="nav-main-link-name">Lịch sử chuyển đổi</span>
+                    </a>
+                </li>
                 @endif
                 @if (auth()->user()->hasPermissionTo('view_banks'))
                 <!-- <li class="nav-main-item">

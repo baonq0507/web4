@@ -69,7 +69,7 @@
                             </td>
                             <td class="font-w600">
                                 <a href="{{ route('cpanel.user.show', ['user' => $user->id]) }}" title="{{ __('index.show') }}">
-                                    {{ $user->name }}
+                                    {{ $user->email ?? $user->phone }}
                                 </a>
                             </td>
                             <td class="font-w600">{{ $user->phone }}</td>

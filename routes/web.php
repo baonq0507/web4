@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\CpanelController;
 use App\Http\Controllers\Cpanel\GrantRoleController;
 use App\Http\Controllers\Cpanel\SymbolController;
@@ -22,21 +23,30 @@ use App\Http\Controllers\Auth\ChangePasswordController;
 use App\Http\Controllers\User\AboutMeController;
 use App\Http\Controllers\Cpanel\KyQuyController;
 use App\Http\Controllers\SpotTradingController;
+use App\Http\Controllers\TradingContractController;
+use App\Http\Controllers\TradingStrategyController;
+use App\Http\Controllers\WalletController;
+use App\Http\Controllers\TransferController;
+use App\Http\Controllers\Cpanel\TransferController as CpanelTransferController;
 Route::middleware('language')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
-    Route::get('/login', [HomeController::class, 'index'])->name('login');
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('loginPost');
+    Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+    Route::post('/register', [HomeController::class, 'registerPost'])->name('registerPost');
+    Route::post('/register/email', [HomeController::class, 'registerEmailPost'])->name('registerEmailPost');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/ky-quy', [HomeController::class, 'kyQuy'])->name('ky-quy');
 
     Route::get('/bitget-earning', [BitgetEarningController::class, 'index'])->name('bitget.earning');
     Route::get('/copy-trading/overview', [CopyTradingController::class, 'overview'])->name('overview');
-    Route::get('/register', [UserController::class, 'register'])->name('register');
-    Route::post('/register', [HomeController::class, 'registerPost'])->name('registerPost');
     Route::post('/send-verification-code', [App\Http\Controllers\EmailVerificationController::class, 'sendVerificationCode'])->name('send.verification.code');
-    Route::post('/verify-email-code', [App\Http\Controllers\EmailVerificationController::class, 'verifyCode'])->name('verify.email.code');
-    Route::post('/login', [HomeController::class, 'loginPost'])->name('loginPost');
+    Route::post('/send-phone-verification-code', [App\Http\Controllers\EmailVerificationController::class, 'sendPhoneVerificationCode'])->name('send.phone.verification.code');
+    Route::post('/verify-email-code', [App\Http\Controllers\EmailVerificationController::class, 'verifyCode'])->name('verify.code');
     Route::get('/about-me', [AboutMeController::class, 'index'])->name('about.me');
-Route::get('/msb', [AboutMeController::class, 'msb'])->name('msb');
-Route::get('/load-more-symbols', [App\Http\Controllers\SymbolController::class, 'loadMore'])->name('load.more.symbols');
+    Route::get('/msb', [AboutMeController::class, 'msb'])->name('msb');
+    Route::get('/load-more-symbols', [App\Http\Controllers\SymbolController::class, 'loadMore'])->name('load.more.symbols');
+    Route::get('/symbols-by-category', [App\Http\Controllers\SymbolController::class, 'getByCategory'])->name('symbols.by.category');
     Route::middleware('customeAuth')->group(function () {
         Route::get('/trade', [HomeController::class, 'trade'])->name('trade');
         Route::post('/upload', [HomeController::class, 'upload'])->name('upload');
@@ -59,14 +69,22 @@ Route::get('/load-more-symbols', [App\Http\Controllers\SymbolController::class, 
         Route::post('/invest', [HomeController::class, 'invest'])->name('invest');
         Route::get('/referred-users', [HomeController::class, 'referredUsers'])->name('referred-users');
         Route::get('/load-more-referred-users', [HomeController::class, 'loadMoreReferredUsers'])->name('load-more-referred-users');
+        Route::get('/invitation', [HomeController::class, 'invitation'])->name('invitation');
         Route::post('/open-ky-quy', [HomeController::class, 'openKyQuy'])->name('open-ky-quy');
         Route::get('/password-withdraw', [HomeController::class, 'passwordWithdraw'])->name('password-withdraw');
         Route::post('/change-password-withdraw', [HomeController::class, 'changePasswordWithdraw'])->name('password-withdraw.update');
         Route::post('/final-settlement', [HomeController::class, 'finalSettlement'])->name('final-settlement');
+                // Transfer Routes
+        Route::get('/transfer', [TransferController::class, 'index'])->name('transfer');
+        Route::post('/transfer/execute', [TransferController::class, 'transfer'])->name('transfer.execute');
+        Route::get('/transfer/history', [TransferController::class, 'getTransferHistory'])->name('transfer.history');
+        Route::get('/transfer/balances', [TransferController::class, 'getBalances'])->name('transfer.balances');
     });
     Route::get('/trading', [HomeController::class, 'trading'])->name('trading');
     Route::get('/projects', [HomeController::class, 'projects'])->name('projects');
     Route::get('/market', [HomeController::class, 'market'])->name('market');
+    Route::get('/news', [App\Http\Controllers\NewsController::class, 'index'])->name('news');
+    Route::get('/news/{slug}', [App\Http\Controllers\NewsController::class, 'show'])->name('news.show');
     Route::get('/load-more-trades', [HomeController::class, 'loadMoreTrades'])->name('loadMoreTrades');
             Route::get('/load-more-deposit-history', [HomeController::class, 'loadMoreDepositHistory'])->name('loadMoreDepositHistory');
         Route::get('/load-more-withdraw-history', [HomeController::class, 'loadMoreWithdrawHistory'])->name('loadMoreWithdrawHistory');
@@ -74,7 +92,32 @@ Route::get('/load-more-symbols', [App\Http\Controllers\SymbolController::class, 
         // Spot Trading Routes
         Route::get('/spot-trading', [SpotTradingController::class, 'index'])->name('spot-trading');
         Route::post('/spot-trading/place-order', [SpotTradingController::class, 'placeOrder'])->name('spot-trading.place-order');
+        Route::post('/spot-trading/place-spot-order', [SpotTradingController::class, 'placeSpotOrder'])->name('spot-trading.place-spot-order');
         Route::post('/spot-trading/cancel-order/{id}', [SpotTradingController::class, 'cancelOrder'])->name('spot-trading.cancel-order');
+        Route::get('/spot-trading/history', [SpotTradingController::class, 'getSpotTradeHistory'])->name('spot-trading.history');
+        Route::get('/spot-trading/get-order-history', [SpotTradingController::class, 'getOrderHistory'])->name('spot-trading.get-order-history');
+        Route::get('/spot-trading/get-trading-stats', [SpotTradingController::class, 'getTradingStats'])->name('spot-trading.get-trading-stats');
+        Route::get('/spot-trading/export-order-history', [SpotTradingController::class, 'exportOrderHistory'])->name('spot-trading.export-order-history');
+        
+        // Trading Contracts Routes
+        Route::get('/trading-contracts', [TradingContractController::class, 'index'])->name('trading-contracts');
+        Route::post('/trading-contracts/create', [TradingContractController::class, 'createContract'])->name('trading-contracts.create');
+        Route::post('/trading-contracts/close/{id}', [TradingContractController::class, 'closePosition'])->name('trading-contracts.close');
+        Route::put('/trading-contracts/update-sl-tp/{id}', [TradingContractController::class, 'updateStopLossTakeProfit'])->name('trading-contracts.update-sl-tp');
+        Route::get('/trading-contracts/get-contracts', [TradingContractController::class, 'getContracts'])->name('trading-contracts.get-contracts');
+        Route::get('/trading-contracts/get-stats', [TradingContractController::class, 'getContractStats'])->name('trading-contracts.get-stats');
+        Route::post('/trading-contracts/update-prices', [TradingContractController::class, 'updatePrices'])->name('trading-contracts.update-prices');
+        
+        // Trading Strategies Routes
+        Route::get('/trading-strategies', [TradingStrategyController::class, 'index'])->name('trading-strategies');
+        Route::post('/trading-strategies', [TradingStrategyController::class, 'store'])->name('trading-strategies.store');
+        Route::put('/trading-strategies/{id}', [TradingStrategyController::class, 'update'])->name('trading-strategies.update');
+        Route::delete('/trading-strategies/{id}', [TradingStrategyController::class, 'destroy'])->name('trading-strategies.destroy');
+        Route::post('/trading-strategies/{id}/toggle-status', [TradingStrategyController::class, 'toggleStatus'])->name('trading-strategies.toggle-status');
+        Route::post('/trading-strategies/{id}/calculate-performance', [TradingStrategyController::class, 'calculatePerformance'])->name('trading-strategies.calculate-performance');
+        Route::get('/trading-strategies/get-strategies', [TradingStrategyController::class, 'getStrategies'])->name('trading-strategies.get-strategies');
+        
+
     });
 Route::middleware('languageAdmin')->group(function () {
     Route::group(['prefix' => 'admin', 'as' => 'cpanel.'], function () {
@@ -197,6 +240,13 @@ Route::middleware('languageAdmin')->group(function () {
             Route::post('/ky-quy-users/reject/{id}', [KyQuyController::class, 'kyQuyUserReject'])->name('ky-quy-users.reject');
             Route::post('/ky-quy-users/stop/{id}', [KyQuyController::class, 'kyQuyUserStop'])->name('ky-quy-users.stop');
             Route::post('/ky-quy-users/finish/{id}', [KyQuyController::class, 'kyQuyUserFinish'])->name('ky-quy-users.finish');
+            
+            // Transfer Management Routes
+            Route::middleware('can:view_transactions')->group(function () {
+                Route::get('/transfers', [CpanelTransferController::class, 'index'])->name('transfers.index');
+                Route::get('/transfers/{id}', [CpanelTransferController::class, 'show'])->name('transfers.show');
+                Route::get('/transfers/export', [CpanelTransferController::class, 'export'])->name('transfers.export');
+            });
         });
     });
 });
@@ -215,9 +265,13 @@ Route::middleware(['auth', 'language'])->group(function () {
     Route::get('/notifications/load-more', [NotificationController::class, 'loadMoreNotifications'])->name('notifications.load-more');
     Route::get('/change-password', [ChangePasswordController::class, 'showChangePasswordForm'])->name('password.change');
     Route::post('/change-password', [ChangePasswordController::class, 'changePassword'])->name('password.update');
-    Route::get('/wallet', [HomeController::class, 'wallet'])->name('wallet');
+    Route::get('/wallet', [WalletController::class, 'index'])->name('wallet');
+    Route::get('/wallet/{symbolId}', [WalletController::class, 'getWalletDetails'])->name('wallet.details');
+    Route::get('/wallet/assets/total', [WalletController::class, 'getTotalAssets'])->name('wallet.total-assets');
 });
 
 Route::get('/captcha', function () {
     return response()->json(['captcha' => captcha_src()]);
 })->name('captcha');
+
+Route::get('/nft', [HomeController::class, 'nft'])->name('nft');

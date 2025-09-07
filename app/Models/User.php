@@ -231,5 +231,30 @@ class User extends Authenticatable
     public function kyquies()
     {
         return $this->hasMany(KyQuyUser::class);
-    }    
+    }
+
+    public function wallets()
+    {
+        return $this->hasMany(Wallet::class);
+    }
+
+    // Lấy wallet cho một symbol cụ thể
+    public function getWallet($symbolId)
+    {
+        return $this->wallets()->where('symbol_id', $symbolId)->first();
+    }
+
+    // Lấy tổng tài sản (USDT + tất cả coin)
+    public function getTotalAssetsAttribute()
+    {
+        $totalAssets = $this->balance; // USDT balance
+        
+        foreach ($this->wallets as $wallet) {
+            // Cần implement logic lấy giá hiện tại
+            $currentPrice = 0; // Placeholder
+            $totalAssets += $wallet->balance * $currentPrice;
+        }
+        
+        return $totalAssets;
+    }
 }

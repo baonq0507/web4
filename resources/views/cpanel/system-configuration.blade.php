@@ -223,6 +223,18 @@
                                 <input type="text" class="form-control" id="{{ $item->key }}" name="{{ $item->key }}" value="{{ $item->value }}">
                             </div>
                             @break
+                            @case('telegram_url')
+                            <div class="form-group col-md-6 mb-3">
+                                <label for="{{ $item->key }}">{{ __('index.telegram_url') }}</label>
+                                <input type="text" class="form-control" id="{{ $item->key }}" name="{{ $item->key }}" value="{{ $item->value }}">
+                            </div>
+                            @break
+                            @case('whatsapp_url')
+                            <div class="form-group col-md-6 mb-3">
+                                <label for="{{ $item->key }}">{{ __('index.whatsapp_url') }}</label>
+                                <input type="text" class="form-control" id="{{ $item->key }}" name="{{ $item->key }}" value="{{ $item->value }}">
+                            </div>
+                            @break
                             @default
                             <div class="form-group col-md-6 mb-3">
                                 <label for="{{ $item->key }}">{{ $item->key }}</label>

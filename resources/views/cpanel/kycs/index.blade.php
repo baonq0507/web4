@@ -34,7 +34,7 @@
                             <td class="text-center">{{ $loop->iteration }}</td>
                             <td class="text-center">{{ $kyc->user->id }}</td>
                             <td class="font-w600">
-                                <a href="{{ route('cpanel.user.show', ['user' => $kyc->user->id]) }}">{{ $kyc->user->phone }}</a>
+                                <a href="{{ route('cpanel.user.show', ['user' => $kyc->user->id]) }}">{{ $kyc->user->phone ?? $kyc->user->email }}</a>
                             </td>
                             <td class="font-w600">{{ $kyc->type == 'passport' ? __('index.passport') : ($kyc->type == 'national_id' ? __('index.national_id') : ($kyc->type == 'driver_license' ? __('index.driver_license') : __('index.residence_card'))) }}</td>
                             <td>

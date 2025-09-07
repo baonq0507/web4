@@ -17,7 +17,7 @@ class CustomeAuth
     public function handle(Request $request, Closure $next): Response
     {
         if (!Auth::check()) {
-            return redirect()->route('home');
+            return redirect()->route('login');
         }
         return $next($request);
     }

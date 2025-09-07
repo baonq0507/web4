@@ -22,8 +22,19 @@ class EmailVerificationController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                'status' => false,
+                'success' => false,
                 'message' => $validator->errors()->first()
+            ], 422);
+        }
+
+        // Kiểm tra xem đã có mã xác thực cho email này chưa và còn hạn không
+        $storedEmail = session('email_to_verify');
+        $expiresAt = session('email_verification_expires');
+        
+        if ($storedEmail === $request->email && $expiresAt && now()->timestamp < $expiresAt) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Mã xác thực đã được gửi cho email này. Vui lòng kiểm tra email hoặc đợi 15 phút để gửi lại.'
             ], 422);
         }
 
@@ -45,12 +56,12 @@ class EmailVerificationController extends Controller
             });
 
             return response()->json([
-                'status' => true,
+                'success' => true,
                 'message' => 'Mã xác thực đã được gửi đến email của bạn'
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'status' => false,
+                'success' => false,
                 'message' => 'Không thể gửi email. Vui lòng thử lại sau.'
             ], 500);
         }
@@ -112,5 +123,57 @@ class EmailVerificationController extends Controller
             'status' => true,
             'message' => 'Xác thực email thành công!'
         ]);
+    }
+
+    public function sendPhoneVerificationCode(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'phone' => 'required|unique:users,phone'
+        ], [
+            'phone.required' => 'Số điện thoại là bắt buộc',
+            'phone.unique' => 'Số điện thoại đã được sử dụng'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
+
+        $verificationCode = Str::random(6);
+        
+        // Lưu mã xác thực vào session với thời gian hết hạn (15 phút)
+        session(['phone_verification_code' => $verificationCode]);
+        session(['phone_to_verify' => $request->phone]);
+        session(['phone_verification_expires' => now()->addMinutes(15)->timestamp]);
+
+        // Gửi SMS xác thực (có thể tích hợp với dịch vụ SMS như Twilio, Nexmo, etc.)
+        // Hiện tại chỉ trả về mã để test
+        try {
+            // TODO: Tích hợp với dịch vụ SMS thực tế
+            // Ví dụ với Twilio:
+            // $twilio = new Client($accountSid, $authToken);
+            // $message = $twilio->messages->create(
+            //     $request->phone,
+            //     [
+            //         'from' => $twilioNumber,
+            //         'body' => "Mã xác thực của bạn là: {$verificationCode}"
+            //     ]
+            // );
+
+            // Tạm thời log mã để test
+            Log::info("Phone verification code for {$request->phone}: {$verificationCode}");
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Mã xác thực đã được gửi đến số điện thoại của bạn'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Không thể gửi SMS. Vui lòng thử lại sau.'
+            ], 500);
+        }
     }
 }

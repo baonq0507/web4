@@ -25,6 +25,180 @@
         background: #2bb8c4;
     }
 
+    /* Modern trading interface styling */
+    .trading-container {
+        background: linear-gradient(135deg, #1a1d29 0%, #2a2d38 100%);
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .trading-card {
+        background: rgba(26, 29, 41, 0.8);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(61, 222, 234, 0.2);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .trading-card:hover {
+        border-color: rgba(61, 222, 234, 0.4);
+        box-shadow: 0 4px 20px rgba(61, 222, 234, 0.1);
+    }
+
+    .price-display {
+        font-family: 'Courier New', monospace;
+        font-weight: bold;
+        text-shadow: 0 0 10px rgba(61, 222, 234, 0.5);
+    }
+
+    .trading-button {
+        background: linear-gradient(45deg, #3ddeea, #2bb8c4);
+        border: none;
+        border-radius: 8px;
+        padding: 12px 24px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(61, 222, 234, 0.3);
+    }
+
+    .trading-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(61, 222, 234, 0.4);
+    }
+
+    .trading-button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .buy-button {
+        background: linear-gradient(45deg, #00d4aa, #00b894);
+        box-shadow: 0 4px 15px rgba(0, 212, 170, 0.3);
+    }
+
+    .sell-button {
+        background: linear-gradient(45deg, #e04b48, #c0392b);
+        box-shadow: 0 4px 15px rgba(224, 75, 72, 0.3);
+    }
+
+    .input-field {
+        background: rgba(26, 29, 41, 0.8);
+        border: 1px solid rgba(61, 222, 234, 0.3);
+        border-radius: 8px;
+        padding: 12px 16px;
+        color: #ffffff;
+        font-size: 16px;
+        transition: all 0.3s ease;
+    }
+
+    .input-field:focus {
+        outline: none;
+        border-color: #3ddeea;
+        box-shadow: 0 0 0 3px rgba(61, 222, 234, 0.1);
+    }
+
+    .status-indicator {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 8px;
+    }
+
+    .status-online {
+        background: #00d4aa;
+        box-shadow: 0 0 10px rgba(0, 212, 170, 0.5);
+    }
+
+    .status-offline {
+        background: #e04b48;
+        box-shadow: 0 0 10px rgba(224, 75, 72, 0.5);
+    }
+
+    /* Price update animation */
+    .price-update-animation {
+        animation: priceUpdate 1s ease-in-out;
+    }
+
+    @keyframes priceUpdate {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); background-color: rgba(61, 222, 234, 0.2); }
+        100% { transform: scale(1); }
+    }
+
+    /* Connection status indicators */
+    .connection-status {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+        background: rgba(26, 29, 41, 0.8);
+        border-radius: 6px;
+        border: 1px solid rgba(61, 222, 234, 0.2);
+        font-size: 12px;
+        color: #ffffff;
+    }
+
+    .connection-status .status-label {
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Enhanced trading interface */
+    .trading-panel {
+        background: linear-gradient(135deg, #1a1d29 0%, #2a2d38 100%);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(61, 222, 234, 0.2);
+    }
+
+    .price-ticker {
+        background: rgba(26, 29, 41, 0.9);
+        border-radius: 8px;
+        padding: 16px;
+        border: 1px solid rgba(61, 222, 234, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .price-ticker:hover {
+        border-color: rgba(61, 222, 234, 0.5);
+        box-shadow: 0 4px 20px rgba(61, 222, 234, 0.1);
+    }
+
+    .market-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 16px;
+        margin-top: 16px;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 12px;
+        background: rgba(26, 29, 41, 0.6);
+        border-radius: 8px;
+        border: 1px solid rgba(61, 222, 234, 0.2);
+    }
+
+    .stat-value {
+        font-size: 18px;
+        font-weight: bold;
+        color: #3ddeea;
+        margin-bottom: 4px;
+    }
+
+    .stat-label {
+        font-size: 12px;
+        color: #8b949e;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
     /* Ensure symbols list is visible */
     .symbol-item {
         min-height: 60px;
@@ -53,6 +227,281 @@
         font-size: 12px;
         color: #3ddeea;
     }
+
+    /* Strong CSS for price-change elements */
+    .price-change {
+        display: inline !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        font-size: 12px !important;
+        line-height: 1.2 !important;
+        white-space: nowrap !important;
+        text-decoration: none !important;
+        font-weight: normal !important;
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        color: inherit !important;
+    }
+
+    /* Override any conflicting styles for price-change */
+    .price-change.text-[#3ddeea] {
+        color: #3ddeea !important;
+    }
+
+    .price-change.text-[#e04b48] {
+        color: #e04b48 !important;
+    }
+
+    /* Force all price-change elements to be visible */
+    [id^="price-change-"] {
+        display: inline !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    [id^="ticker-price-change-"] {
+        display: inline !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    /* Price change display styling */
+    .price-change-display {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    /* Symbol Tabs Styling */
+    .symbol-tab-btn {
+        color: #9ca3af;
+        background: transparent;
+    }
+
+    .symbol-tab-btn.active {
+        color: #ffffff;
+        background: #3ddeea;
+    }
+
+    .symbol-tab-btn:hover {
+        color: #ffffff;
+        background: rgba(61, 222, 234, 0.2);
+    }
+
+    .symbol-tab-content {
+        display: block;
+    }
+
+    .symbol-tab-content.hidden {
+        display: none;
+    }
+
+    /* Mobile Symbol Tabs Styling */
+    .mobile-symbol-tab-btn {
+        color: #9ca3af;
+        background: transparent;
+    }
+
+    .mobile-symbol-tab-btn.active {
+        color: #ffffff;
+        background: #3ddeea;
+    }
+
+    .mobile-symbol-tab-btn:hover {
+        color: #ffffff;
+        background: rgba(61, 222, 234, 0.2);
+    }
+
+    .mobile-currency-tab-content {
+        display: block;
+    }
+
+    .mobile-currency-tab-content.hidden {
+        display: none;
+        min-height: 1em;
+        line-height: 1.2;
+    }
+
+    .price-change-display .price-change {
+        display: inline !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    /* Ensure price change display is always visible */
+    .symbol-item .price-change-display {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        height: auto !important;
+        width: auto !important;
+        overflow: visible !important;
+    }
+
+    .symbol-item .price-change-display .price-change {
+        display: inline !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        height: auto !important;
+        width: auto !important;
+        overflow: visible !important;
+    }
+
+    /* Debug styling to make sure elements are visible */
+    .price-change-display {
+        border: 1px solid transparent !important;
+        background: transparent !important;
+        position: relative !important;
+        z-index: 1 !important;
+    }
+
+    .price-change-display::before {
+        content: 'DEBUG: ' attr(id);
+        position: absolute;
+        top: -20px;
+        left: 0;
+        font-size: 8px;
+        color: red;
+        background: yellow;
+        z-index: 9999;
+        display: block !important;
+    }
+
+    /* Force visibility for debugging */
+    .price-change-display {
+        background: rgba(255, 0, 0, 0.1) !important;
+        border: 1px solid red !important;
+        min-height: 20px !important;
+        padding: 2px !important;
+    }
+
+    /* Ensure text is visible */
+    .price-change-display .price-change {
+        color: inherit !important;
+        background: rgba(0, 255, 0, 0.1) !important;
+        border: 1px solid green !important;
+        padding: 1px !important;
+    }
+
+    /* Override any conflicting styles */
+    .symbol-item .text-right .price-change-display {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        height: auto !important;
+        width: auto !important;
+        overflow: visible !important;
+        position: static !important;
+        float: none !important;
+        clear: none !important;
+    }
+
+
+
+    /* Additional debugging */
+    .price-change-display {
+        font-size: 12px !important;
+        line-height: 1.2 !important;
+        white-space: nowrap !important;
+    }
+
+    /* Force text to be visible */
+    .price-change-display .price-change {
+        font-size: 12px !important;
+        line-height: 1.2 !important;
+        white-space: nowrap !important;
+        text-decoration: none !important;
+        font-weight: normal !important;
+    }
+
+    /* Ensure proper display in symbol items */
+    .symbol-item .text-right {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-end !important;
+        justify-content: center !important;
+        min-height: 40px !important;
+    }
+
+    .symbol-item .text-right .price-display {
+        margin-bottom: 4px !important;
+    }
+
+    .symbol-item .text-right .price-change-display {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+
+
+    /* Consolidated price-change-display styling */
+    .price-change-display {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        min-height: 1em !important;
+        line-height: 1.2 !important;
+        font-size: 12px !important;
+        white-space: nowrap !important;
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .price-change-display .price-change {
+        display: inline !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        font-size: 12px !important;
+        line-height: 1.2 !important;
+        white-space: nowrap !important;
+        text-decoration: none !important;
+        font-weight: normal !important;
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* Color inheritance for price change display */
+    .price-change-display.text-[#3ddeea] {
+        color: #3ddeea !important;
+    }
+
+    .price-change-display.text-[#e04b48] {
+        color: #e04b48 !important;
+    }
+
+    .price-change-display.text-[#3ddeea] .price-change {
+        color: #3ddeea !important;
+    }
+
+    .price-change-display.text-[#e04b48] .price-change {
+        color: #e04b48 !important;
+    }
+
+    /* Symbol item layout for proper display */
+    .symbol-item .text-right {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-end !important;
+        justify-content: center !important;
+        min-height: 40px !important;
+    }
+
+    .symbol-item .text-right .price-display {
+        margin-bottom: 4px !important;
+    }
+
+    .symbol-item .text-right .price-change-display {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+
 
     /* Custom slider styling */
     input[type="range"] {
@@ -1238,10 +1687,10 @@
             </defs>
         </svg>
     </span>
-    @foreach ($symbols as $item)
+    @foreach ($symbols->take(10) as $item)
     <span class="text-white font-semibold">
         {{ $item->name }}
-        <span class="text-[#3ddeea] font-semibold price-change" id="price-change-{{ $item->symbol }}">{{ $item->price_change }}%</span>
+        <span class="font-semibold price-change {{ $item->price_change >= 0 ? 'text-[#3ddeea]' : 'text-[#e04b48]' }}" id="ticker-price-change-{{ $item->symbol }}">{{ $item->price_change }}%</span>
     </span>
     @endforeach
 </section>
@@ -1280,27 +1729,91 @@
                 </div>
             </div>
             
+            <!-- Mobile Symbol Tabs -->
+            <div class="mobile-symbol-tabs">
+                <div class="flex bg-[#181a20] rounded-lg p-1 mb-3">
+                    <button class="mobile-symbol-tab-btn flex-1 py-2 px-2 text-xs font-medium rounded-md transition-colors active" data-tab="crypto">
+                        <i class="fab fa-bitcoin mr-1"></i>Crypto
+                    </button>
+                    <button class="mobile-symbol-tab-btn flex-1 py-2 px-2 text-xs font-medium rounded-md transition-colors" data-tab="usa">
+                        <i class="fas fa-chart-line mr-1"></i>USA
+                    </button>
+                    <button class="mobile-symbol-tab-btn flex-1 py-2 px-2 text-xs font-medium rounded-md transition-colors" data-tab="forex">
+                        <i class="fas fa-exchange-alt mr-1"></i>Forex
+                    </button>
+                </div>
+            </div>
+
             <!-- Currency Options Container -->
             <div class="currency-options-container">
-                @foreach ($symbols as $item)
-                <div class="currency-option {{ $item->id == $symbolActive->id ? 'active' : '' }}"
-                    data-symbol="{{ $item->symbol }}"
-                    data-name="{{ $item->name }}"
-                    data-icon="{{ $item->image }}"
-                    data-id="{{ $item->id }}">
-                    <img src="{{ $item->image }}" alt="{{ $item->name }}">
-                    <div class="currency-info">
-                        <div class="currency-name">{{ $item->name }}</div>
-                        <div class="stat-symbol">{{ $item->symbol }}</div>
-                    </div>
-                    <div class="currency-price">
-                        <div class="current-price" id="mobile-price-{{ $item->symbol }}">--</div>
-                        <div class="price-change {{ $item->price_change >= 0 ? 'positive' : 'negative' }}" id="mobile-price-change-{{ $item->symbol }}">
-                            {{ $item->price_change >= 0 ? '+' : '' }}{{ $item->price_change }}%
+                <!-- Crypto Options -->
+                <div class="mobile-currency-tab-content" id="mobile-crypto-tab">
+                    @foreach ($cryptoSymbols as $item)
+                    <div class="currency-option {{ $item->id == $symbolActive->id ? 'active' : '' }}"
+                        data-symbol="{{ $item->symbol }}"
+                        data-name="{{ $item->name }}"
+                        data-icon="{{ $item->image }}"
+                        data-id="{{ $item->id }}">
+                        <img src="{{ $item->image }}" alt="{{ $item->name }}">
+                        <div class="currency-info">
+                            <div class="currency-name">{{ $item->name }}</div>
+                            <div class="stat-symbol">{{ $item->symbol }}</div>
+                        </div>
+                        <div class="currency-price">
+                            <div class="current-price" id="mobile-price-{{ $item->symbol }}">--</div>
+                            <div class="price-change {{ $item->price_change >= 0 ? 'positive' : 'negative' }}" id="mobile-price-change-{{ $item->symbol }}">
+                                {{ $item->price_change >= 0 ? '+' : '' }}{{ $item->price_change }}%
+                            </div>
                         </div>
                     </div>
+                    @endforeach
                 </div>
-                @endforeach
+
+                <!-- USA Options -->
+                <div class="mobile-currency-tab-content hidden" id="mobile-usa-tab">
+                    @foreach ($usaSymbols as $item)
+                    <div class="currency-option {{ $item->id == $symbolActive->id ? 'active' : '' }}"
+                        data-symbol="{{ $item->symbol }}"
+                        data-name="{{ $item->name }}"
+                        data-icon="{{ $item->image }}"
+                        data-id="{{ $item->id }}">
+                        <img src="{{ $item->image }}" alt="{{ $item->name }}">
+                        <div class="currency-info">
+                            <div class="currency-name">{{ $item->name }}</div>
+                            <div class="stat-symbol">{{ $item->symbol }}</div>
+                        </div>
+                        <div class="currency-price">
+                            <div class="current-price" id="mobile-price-{{ $item->symbol }}">--</div>
+                            <div class="price-change {{ $item->price_change >= 0 ? 'positive' : 'negative' }}" id="mobile-price-change-{{ $item->symbol }}">
+                                {{ $item->price_change >= 0 ? '+' : '' }}{{ $item->price_change }}%
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+
+                <!-- Forex Options -->
+                <div class="mobile-currency-tab-content hidden" id="mobile-forex-tab">
+                    @foreach ($forexSymbols as $item)
+                    <div class="currency-option {{ $item->id == $symbolActive->id ? 'active' : '' }}"
+                        data-symbol="{{ $item->symbol }}"
+                        data-name="{{ $item->name }}"
+                        data-icon="{{ $item->image }}"
+                        data-id="{{ $item->id }}">
+                        <img src="{{ $item->image }}" alt="{{ $item->name }}">
+                        <div class="currency-info">
+                            <div class="currency-name">{{ $item->name }}</div>
+                            <div class="stat-symbol">{{ $item->symbol }}</div>
+                        </div>
+                        <div class="currency-price">
+                            <div class="current-price" id="mobile-price-{{ $item->symbol }}">--</div>
+                            <div class="price-change {{ $item->price_change >= 0 ? 'positive' : 'negative' }}" id="mobile-price-change-{{ $item->symbol }}">
+                                {{ $item->price_change >= 0 ? '+' : '' }}{{ $item->price_change }}%
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
             </div>
         </div>
         <div class="stats-24h">
@@ -1552,13 +2065,29 @@
                 @endif
             </div> -->
 
-            <!-- All Symbols List -->
-            <div class="space-y-2 mb-4 flex-1 overflow-y-auto pb-4 custom-scrollbar" style="min-height: 300px; max-height: 400px;">
-                @if($symbols && count($symbols) > 0)
-                @foreach ($symbols as $item)
+            <!-- Symbol Tabs -->
+            <div class="mb-4">
+                <div class="flex bg-[#181a20] rounded-lg p-1">
+                    <button class="symbol-tab-btn flex-1 py-2 px-2 text-xs font-medium rounded-md transition-colors active" data-tab="crypto">
+                        <i class="fab fa-bitcoin mr-1"></i>Crypto
+                    </button>
+                    <button class="symbol-tab-btn flex-1 py-2 px-2 text-xs font-medium rounded-md transition-colors" data-tab="usa">
+                        <i class="fas fa-chart-line mr-1"></i>USA
+                    </button>
+                    <button class="symbol-tab-btn flex-1 py-2 px-2 text-xs font-medium rounded-md transition-colors" data-tab="forex">
+                        <i class="fas fa-exchange-alt mr-1"></i>Forex
+                    </button>
+                </div>
+            </div>
+
+            <!-- Crypto Symbols List -->
+            <div class="space-y-2 mb-4 flex-1 overflow-y-auto pb-4 custom-scrollbar symbol-tab-content" id="crypto-tab" style="min-height: 300px; max-height: 400px;">
+                @if($cryptoSymbols && count($cryptoSymbols) > 0)
+                @foreach ($cryptoSymbols as $item)
                 <div class="flex items-center gap-3 p-3 rounded-md cursor-pointer symbol-item hover:bg-[#2a2d38] transition-colors {{ $item->id == $symbolActive->id ? 'symbol-active' : 'bg-[#181a20]' }}"
                     data-symbol="{{ $item->symbol }}"
                     data-icon="{{ $item->image }}"
+                    data-type="{{ $item->category }}"
                     data-id="{{ $item->id }}">
                     <img src="{{ $item->image }}" class="w-6 h-6 flex-shrink-0" alt="{{ $item->name }}">
                     <div class="flex-1 min-w-0">
@@ -1567,15 +2096,102 @@
                     </div>
                     <div class="text-right">
                         <div class="text-white text-sm font-semibold price-display" id="price-{{ $item->symbol }}">--</div>
-                        <div class="text-xs price-change-display" id="price-change-display-{{ $item->symbol }}">
-                            <span class="price-change" id="price-change-{{ $item->symbol }}">{{ $item->price_change }}%</span>
+                        <div class="text-xs price-change-display {{ $item->price_change >= 0 ? 'text-[#3ddeea]' : 'text-[#e04b48]' }}" id="price-change-display-{{ $item->symbol }}">
+                            <span class="price-change {{ $item->price_change >= 0 ? 'text-[#3ddeea]' : 'text-[#e04b48]' }}" id="price-change-{{ $item->symbol }}">{{ $item->price_change }}%</span>
                         </div>
                     </div>
                 </div>
                 @endforeach
                 @else
                 <div class="text-center text-gray-400 py-4">
-                    <p>Không có symbols nào</p>
+                    <p>Không có symbols Crypto nào</p>
+                </div>
+                @endif
+            </div>
+
+            <!-- USA Symbols List -->
+            <div class="space-y-2 mb-4 flex-1 overflow-y-auto pb-4 custom-scrollbar symbol-tab-content hidden" id="usa-tab" style="min-height: 300px; max-height: 400px;">
+                @if($usaSymbols && count($usaSymbols) > 0)
+                @foreach ($usaSymbols as $item)
+                <div class="flex items-center gap-3 p-3 rounded-md cursor-pointer symbol-item hover:bg-[#2a2d38] transition-colors {{ $item->id == $symbolActive->id ? 'symbol-active' : 'bg-[#181a20]' }}"
+                    data-symbol="{{ $item->symbol }}"
+                    data-icon="{{ $item->image }}"
+                    data-type="{{ $item->category }}"
+                    data-id="{{ $item->id }}">
+                    <img src="{{ $item->image }}" class="w-6 h-6 flex-shrink-0" alt="{{ $item->name }}">
+                    <div class="flex-1 min-w-0">
+                        <div class="text-white text-sm font-medium truncate">{{ $item->name }}</div>
+                        <div class="text-gray-400 text-xs truncate">{{ $item->symbol }}</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-white text-sm font-semibold price-display" id="price-{{ $item->symbol }}">--</div>
+                        <div class="text-xs price-change-display {{ $item->price_change >= 0 ? 'text-[#3ddeea]' : 'text-[#e04b48]' }}" id="price-change-display-{{ $item->symbol }}">
+                            <span class="price-change {{ $item->price_change >= 0 ? 'text-[#3ddeea]' : 'text-[#e04b48]' }}" id="price-change-{{ $item->symbol }}">{{ $item->price_change }}%</span>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+                @else
+                <div class="text-center text-gray-400 py-4">
+                    <p>Không có symbols USA nào</p>
+                </div>
+                @endif
+            </div>
+
+            <!-- Forex Symbols List -->
+            <div class="space-y-2 mb-4 flex-1 overflow-y-auto pb-4 custom-scrollbar symbol-tab-content hidden" id="forex-tab" style="min-height: 300px; max-height: 400px;">
+                @if($forexSymbols && count($forexSymbols) > 0)
+                @foreach ($forexSymbols as $item)
+                <div class="flex items-center gap-3 p-3 rounded-md cursor-pointer symbol-item hover:bg-[#2a2d38] transition-colors {{ $item->id == $symbolActive->id ? 'symbol-active' : 'bg-[#181a20]' }}"
+                    data-symbol="{{ $item->symbol }}"
+                    data-icon="{{ $item->image }}"
+                    data-type="{{ $item->category }}"
+                    data-id="{{ $item->id }}">
+                    <img src="{{ $item->image }}" class="w-6 h-6 flex-shrink-0" alt="{{ $item->name }}">
+                    <div class="flex-1 min-w-0">
+                        <div class="text-white text-sm font-medium truncate">{{ $item->name }}</div>
+                        <div class="text-gray-400 text-xs truncate">{{ $item->symbol }}</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-white text-sm font-semibold price-display" id="price-{{ $item->symbol }}">--</div>
+                        <div class="text-xs price-change-display {{ $item->price_change >= 0 ? 'text-[#3ddeea]' : 'text-[#e04b48]' }}" id="price-change-display-{{ $item->symbol }}">
+                            <span class="price-change {{ $item->price_change >= 0 ? 'text-[#3ddeea]' : 'text-[#e04b48]' }}" id="price-change-{{ $item->symbol }}">{{ $item->price_change }}%</span>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+                @else
+                <div class="text-center text-gray-400 py-4">
+                    <p>Không có symbols Forex nào</p>
+                </div>
+                @endif
+            </div>
+
+            <!-- Crypto Symbols List -->
+            <div class="space-y-2 mb-4 flex-1 overflow-y-auto pb-4 custom-scrollbar symbol-tab-content hidden" id="crypto-tab" style="min-height: 300px; max-height: 400px;">
+                @if($cryptoSymbols && count($cryptoSymbols) > 0)
+                @foreach ($cryptoSymbols as $item)
+                <div class="flex items-center gap-3 p-3 rounded-md cursor-pointer symbol-item hover:bg-[#2a2d38] transition-colors {{ $item->id == $symbolActive->id ? 'symbol-active' : 'bg-[#181a20]' }}"
+                    data-symbol="{{ $item->symbol }}"
+                    data-icon="{{ $item->image }}"
+                    data-type="{{ $item->category }}"
+                    data-id="{{ $item->id }}">
+                    <img src="{{ $item->image }}" class="w-6 h-6 flex-shrink-0" alt="{{ $item->name }}">
+                    <div class="flex-1 min-w-0">
+                        <div class="text-white text-sm font-medium truncate">{{ $item->name }}</div>
+                        <div class="text-gray-400 text-xs truncate">{{ $item->symbol }}</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-white text-sm font-semibold price-display" id="price-{{ $item->symbol }}">--</div>
+                        <div class="text-xs price-change-display {{ $item->price_change >= 0 ? 'text-[#3ddeea]' : 'text-[#e04b48]' }}" id="price-change-display-{{ $item->symbol }}">
+                            <span class="price-change {{ $item->price_change >= 0 ? 'text-[#3ddeea]' : 'text-[#e04b48]' }}" id="price-change-{{ $item->symbol }}">{{ $item->price_change }}%</span>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+                @else
+                <div class="text-center text-gray-400 py-4">
+                    <p>Không có symbols Crypto nào</p>
                 </div>
                 @endif
             </div>
@@ -2363,7 +2979,6 @@
                     // Update modal content
                     $('#result-symbol-name').text(data.symbol);
 
-
                     $('#result-amount').text(formatAmount(data.amount));
                     $('#result-period').text(data.period + 's');
                     $('#result-type').text(data.order_type === 'buy' ? "{{ __('index.buy') }}" : "{{ __('index.sell') }}");
@@ -2406,7 +3021,10 @@
             };
         }
 
-        // Initial connection
+
+
+
+        // Initial connections
         connectWebSocket();
 
         // Test function to force show dropdown
@@ -2460,6 +3078,16 @@
                 // Update main current price
                 $('#current-price').text(priceText);
                 $('#current-price-change').text(changeText);
+                
+                // Update price change display container color
+                const priceChangeDisplayElement = symbolElement.find('.price-change-display');
+                if (priceChangeDisplayElement.length > 0) {
+                    if (changeText.includes('+') || parseFloat(changeText) > 0) {
+                        priceChangeDisplayElement.removeClass('text-[#e04b48]').addClass('text-[#3ddeea]');
+                    } else {
+                        priceChangeDisplayElement.removeClass('text-[#3ddeea]').addClass('text-[#e04b48]');
+                    }
+                }
             }
         }
 
@@ -2571,6 +3199,9 @@
             // Update active state in desktop symbol list
             $('.symbol-item').removeClass('symbol-active').addClass('bg-[#181a20]');
             $(`.symbol-item[data-symbol="${symbol}"]`).removeClass('bg-[#181a20]').addClass('symbol-active');
+
+            // Auto-select correct tab based on active symbol
+            selectTabForActiveSymbol();
             
             // Close mobile dropdown
             closeMobileDropdown();
@@ -3310,6 +3941,7 @@
                 socket = null;
             }
             
+            
             // Close all ticker websockets
             let closedCount = 0;
             socketTickerMap.forEach((ws, symbolKey) => {
@@ -3444,13 +4076,13 @@
                     }
                 };
 
-                            ws.onerror = function(error) {
-                console.error(`Ticker WebSocket error for ${symbol}:`, error);
-                // Close the websocket on error to prevent hanging connections
-                if (ws.readyState === WebSocket.OPEN) {
-                    ws.close();
-                }
-            };
+                ws.onerror = function(error) {
+                    console.error(`Ticker WebSocket error for ${symbol}:`, error);
+                    // Close the websocket on error to prevent hanging connections
+                    if (ws.readyState === WebSocket.OPEN) {
+                        ws.close();
+                    }
+                };
 
                 socketTickerMap.set(symbol, ws);
             }, 100);
@@ -3463,8 +4095,107 @@
             connectTickerSocket(symbol.symbol);
         }
         
+        // Initialize price change display colors
+        console.log('Initializing price change display colors...');
+        console.log('Total price-change-display elements found:', $('.price-change-display').length);
+        console.log('Total price-change elements found:', $('.price-change').length);
+        console.log('Total ticker-price-change elements found:', $('[id^="ticker-price-change-"]').length);
+        
+        $('.price-change-display').each(function(index) {
+            const priceChangeElement = $(this).find('.price-change');
+            const priceChangeText = priceChangeElement.text();
+            const priceChangeValue = parseFloat(priceChangeText.replace('%', ''));
+            
+            console.log(`Element ${index}:`, {
+                id: $(this).attr('id'),
+                priceChangeElement: priceChangeElement.length,
+                text: priceChangeText,
+                value: priceChangeValue,
+                visible: $(this).is(':visible'),
+                display: $(this).css('display'),
+                visibility: $(this).css('visibility'),
+                opacity: $(this).css('opacity')
+            });
+            
+            if (!isNaN(priceChangeValue)) {
+                if (priceChangeValue >= 0) {
+                    $(this).removeClass('text-[#e04b48]').addClass('text-[#3ddeea]');
+                    priceChangeElement.removeClass('text-[#e04b48]').addClass('text-[#3ddeea]');
+                } else {
+                    $(this).removeClass('text-[#3ddeea]').addClass('text-[#e04b48]');
+                    priceChangeElement.removeClass('text-[#3ddeea]').addClass('text-[#e04b48]');
+                }
+            }
+        });
+        
+        // Initialize ticker price change colors
+        $('[id^="ticker-price-change-"]').each(function(index) {
+            const priceChangeText = $(this).text();
+            const priceChangeValue = parseFloat(priceChangeText.replace('%', ''));
+            
+            console.log(`Ticker Element ${index}:`, {
+                id: $(this).attr('id'),
+                text: priceChangeText,
+                value: priceChangeValue
+            });
+            
+            if (!isNaN(priceChangeValue)) {
+                if (priceChangeValue >= 0) {
+                    $(this).removeClass('text-[#e04b48]').addClass('text-[#3ddeea]');
+                } else {
+                    $(this).removeClass('text-[#3ddeea]').addClass('text-[#e04b48]');
+                }
+            }
+        });
+        
+        console.log('Price change display initialization complete');
+        
         // Check websocket health every 30 seconds
         setInterval(checkWebsocketHealth, 30000);
+        
+        // Debug: Log all price-change elements on page load
+        setTimeout(() => {
+            console.log('🔍 Debug: All price-change elements on page:');
+            $('[id^="price-change-"]').each(function() {
+                console.log('  -', $(this).attr('id'), ':', $(this).text(), 'Classes:', $(this).attr('class'));
+            });
+            console.log('🔍 Debug: All ticker-price-change elements on page:');
+            $('[id^="ticker-price-change-"]').each(function() {
+                console.log('  -', $(this).attr('id'), ':', $(this).text(), 'Classes:', $(this).attr('class'));
+            });
+            console.log('🔍 Debug: All price-change-display elements on page:');
+            $('.price-change-display').each(function() {
+                console.log('  -', $(this).attr('id'), ':', $(this).text(), 'Classes:', $(this).attr('class'));
+            });
+        }, 2000);
+
+        // Test function to manually update price change
+        window.testPriceChangeUpdate = function(symbol) {
+            console.log('🧪 Testing price change update for symbol:', symbol);
+            const testValue = Math.random() > 0.5 ? 2.5 : -1.8;
+            
+            // Test price-change element
+            const priceChangeElement = $('#price-change-' + symbol);
+            if (priceChangeElement.length > 0) {
+                priceChangeElement.text(testValue + '%');
+                priceChangeElement.removeClass('text-[#3ddeea] text-[#e04b48]');
+                priceChangeElement.addClass(testValue > 0 ? 'text-[#3ddeea]' : 'text-[#e04b48]');
+                console.log('✅ Test updated price-change for', symbol, 'with value:', testValue + '%');
+            } else {
+                console.log('❌ Test failed: price-change element not found for', symbol);
+            }
+            
+            // Test ticker-price-change element
+            const tickerPriceChangeElement = $('#ticker-price-change-' + symbol);
+            if (tickerPriceChangeElement.length > 0) {
+                tickerPriceChangeElement.text(testValue + '%');
+                tickerPriceChangeElement.removeClass('text-[#3ddeea] text-[#e04b48]');
+                tickerPriceChangeElement.addClass(testValue > 0 ? 'text-[#3ddeea]' : 'text-[#e04b48]');
+                console.log('✅ Test updated ticker-price-change for', symbol, 'with value:', testValue + '%');
+            } else {
+                console.log('❌ Test failed: ticker-price-change element not found for', symbol);
+            }
+        };
 
         // Update symbol selection handler with debounce
         let symbolChangeTimeout = null;
@@ -3507,6 +4238,9 @@
                 // Update hidden input for symbol data
                 $('#symbol-active-data').val(symbol);
                 $('#symbol-active-data').attr('data-id', id);
+
+                // Auto-select correct tab based on active symbol
+                selectTabForActiveSymbol();
 
                 const randomParam = Math.random().toString(36).substring(7);
                 const newSrc = 'https://www.tradingview-widget.com/embed-widget/advanced-chart/?locale=vi_VN#%7B%22autosize%22%3Atrue%2C%22symbol%22%3A%22' + symbol + '%22%2C%22interval%22%3A%2215%22%2C%22timezone%22%3A%22Etc%2FUTC%22%2C%22theme%22%3A%22dark%22%2C%22style%22%3A%221%22%2C%22allow_symbol_change%22%3Afalse%2C%22container_id%22%3A%22tradingview_widget_container%22%2C%22support_host%22%3A%22https%3A%2F%2Fwww.tradingview.com%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22utm_source%22%3A%22binex.baonq.dev%22%2C%22utm_medium%22%3A%22widget%22%2C%22utm_campaign%22%3A%22advanced-chart%22%2C%22page-uri%22%3A%22binex.baonq.dev%2Ftrading-future%3Fsymbol%3D' + symbol + '%22%7D';
@@ -4598,6 +5332,79 @@
             $('#tradeResultModal').addClass('hidden');
         });
 
+        // Symbol Tabs Functionality
+        $('.symbol-tab-btn').click(function() {
+            const tab = $(this).data('tab');
+            
+            // Remove active class from all tabs
+            $('.symbol-tab-btn').removeClass('active');
+            // Add active class to clicked tab
+            $(this).addClass('active');
+            
+            // Hide all tab contents
+            $('.symbol-tab-content').addClass('hidden');
+            // Show selected tab content
+            $('#' + tab + '-tab').removeClass('hidden');
+        });
+
+        // Mobile Symbol Tabs Functionality
+        $('.mobile-symbol-tab-btn').click(function() {
+            const tab = $(this).data('tab');
+            
+            // Remove active class from all mobile tabs
+            $('.mobile-symbol-tab-btn').removeClass('active');
+            // Add active class to clicked tab
+            $(this).addClass('active');
+            
+            // Hide all mobile tab contents
+            $('.mobile-currency-tab-content').addClass('hidden');
+            // Show selected tab content
+            $('#mobile-' + tab + '-tab').removeClass('hidden');
+        });
+
+        // Auto-select correct tab based on active symbol
+        function selectTabForActiveSymbol() {
+            if (symbolActive) {
+                // Check if active symbol is crypto, usa, or forex
+                const activeSymbolElement = $('.symbol-item[data-symbol="' + symbolActive.toUpperCase() + '"]');
+                if (activeSymbolElement.length > 0) {
+                    const isCrypto = activeSymbolElement.closest('#crypto-tab').length > 0;
+                    const isUsa = activeSymbolElement.closest('#usa-tab').length > 0;
+                    const isForex = activeSymbolElement.closest('#forex-tab').length > 0;
+                    
+                    // Remove active class from all tabs
+                    $('.symbol-tab-btn').removeClass('active');
+                    $('.mobile-symbol-tab-btn').removeClass('active');
+                    
+                    // Hide all tab contents
+                    $('.symbol-tab-content').addClass('hidden');
+                    $('.mobile-currency-tab-content').addClass('hidden');
+                    
+                    if (isCrypto) {
+                        $('.symbol-tab-btn[data-tab="crypto"]').addClass('active');
+                        $('.mobile-symbol-tab-btn[data-tab="crypto"]').addClass('active');
+                        $('#crypto-tab').removeClass('hidden');
+                        $('#mobile-crypto-tab').removeClass('hidden');
+                    } else if (isUsa) {
+                        $('.symbol-tab-btn[data-tab="usa"]').addClass('active');
+                        $('.mobile-symbol-tab-btn[data-tab="usa"]').addClass('active');
+                        $('#usa-tab').removeClass('hidden');
+                        $('#mobile-usa-tab').removeClass('hidden');
+                    } else if (isForex) {
+                        $('.symbol-tab-btn[data-tab="forex"]').addClass('active');
+                        $('.mobile-symbol-tab-btn[data-tab="forex"]').addClass('active');
+                        $('#forex-tab').removeClass('hidden');
+                        $('#mobile-forex-tab').removeClass('hidden');
+                    }
+                }
+            }
+        }
+
+        // Call this function when symbol changes
+        // This will be called from the existing symbol change logic
+
+        // Initialize tabs based on active symbol when page loads
+        selectTabForActiveSymbol();
 
     });
 </script>

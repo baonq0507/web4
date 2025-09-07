@@ -18,8 +18,8 @@ class Language
         if (session('language')) {
             app()->setLocale(session('language'));
         } else {
-            session(['language' => 'vi']);
-            app()->setLocale('vi');
+            session(['language' => 'en']);
+            app()->setLocale('en');
         }
         return $next($request);
     }

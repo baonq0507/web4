@@ -37,7 +37,7 @@
                 <!-- CTA Buttons -->
                 <div class="flex flex-col sm:flex-row gap-6 justify-center lg:justify-start">
                     @if (!auth()->check())
-                    <a href="{{ route('register') }}" class="group bg-cyan-500 hover:bg-cyan-600 text-white px-8 py-4 rounded-2xl font-bold text-base transition-all duration-300 ease-in-out hover:scale-105 shadow-2xl hover:shadow-cyan-500/25 transform hover:-translate-y-1">
+                    <a href="#" id="btnRegister1" class="group bg-cyan-500 hover:bg-cyan-600 text-white px-8 py-4 rounded-2xl font-bold text-base transition-all duration-300 ease-in-out hover:scale-105 shadow-2xl hover:shadow-cyan-500/25 transform hover:-translate-y-1">
                         <span class="flex items-center justify-center space-x-3">
                             <i class="fas fa-user-plus text-lg group-hover:animate-pulse"></i>
                             <span>Register Now</span>

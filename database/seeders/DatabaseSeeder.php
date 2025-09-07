@@ -32,6 +32,8 @@ class DatabaseSeeder extends Seeder
             'wallet_address' => '0x1234567890',
         ]);
 
+        
+
         $this->call([
             RoleSeeder::class,
             ConfigSytemSeeder::class,
@@ -41,6 +43,7 @@ class DatabaseSeeder extends Seeder
             UserKycSeeder::class,
             TransactionSeeder::class,
             TimeSessionSeeder::class,
+            WalletSeeder::class,
             // SessionGameSeeder::class,
         ]);
     }

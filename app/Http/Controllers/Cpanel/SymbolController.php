@@ -9,10 +9,24 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\File;
 class SymbolController extends Controller
 {
-    public function symbols()
+    public function symbols(Request $request)
     {
-        $symbols = Symbol::all();
-        return view('cpanel.symbols', compact('symbols'));
+        $query = Symbol::query();
+        
+        // Filter by category if provided
+        if ($request->has('category') && $request->category) {
+            $query->where('category', $request->category);
+        }
+        
+        // Filter by status if provided
+        if ($request->has('status') && $request->status) {
+            $query->where('status', $request->status);
+        }
+        
+        $symbols = $query->orderBy('category')->orderBy('name')->get();
+        $categories = ['crypto', 'usa', 'forex'];
+        
+        return view('cpanel.symbols', compact('symbols', 'categories'));
     }
 
     public function storeSymbol(Request $request)
@@ -22,6 +36,14 @@ class SymbolController extends Controller
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'symbol' => 'required|string|max:255|unique:symbols,symbol',
             'status' => 'required|in:active,inactive',
+            'category' => 'required|in:crypto,usa,forex',
+            'description' => 'nullable|string|max:500',
+            'base_currency' => 'nullable|string|max:10',
+            'quote_currency' => 'nullable|string|max:10',
+            'tick_size' => 'nullable|numeric|min:0',
+            'lot_size' => 'nullable|numeric|min:0',
+            'is_margin_trading' => 'nullable|boolean',
+            'max_leverage' => 'nullable|integer|min:1|max:1000',
         ], [
             'name.required' => __('index.name_required'),
             'name.string' => __('index.name_string'),
@@ -60,6 +82,14 @@ class SymbolController extends Controller
         $symbol->image = $imageName;
         $symbol->symbol = $request->symbol;
         $symbol->status = $request->status;
+        $symbol->category = $request->category;
+        $symbol->description = $request->description;
+        $symbol->base_currency = $request->base_currency;
+        $symbol->quote_currency = $request->quote_currency;
+        $symbol->tick_size = $request->tick_size ?? 0.00001;
+        $symbol->lot_size = $request->lot_size ?? 1.00;
+        $symbol->is_margin_trading = $request->has('is_margin_trading') ? true : false;
+        $symbol->max_leverage = $request->max_leverage ?? 1;
         $symbol->save();
 
         return response()->json(['message' => __('index.symbol_created_successfully')]);
@@ -77,6 +107,14 @@ class SymbolController extends Controller
             'name' => 'required|string|max:255|unique:symbols,name,' . $symbol,
             'symbol' => 'required|string|max:255|unique:symbols,symbol,' . $symbol,
             'status' => 'required|in:active,inactive',
+            'category' => 'required|in:crypto,usa,forex',
+            'description' => 'nullable|string|max:500',
+            'base_currency' => 'nullable|string|max:10',
+            'quote_currency' => 'nullable|string|max:10',
+            'tick_size' => 'nullable|numeric|min:0',
+            'lot_size' => 'nullable|numeric|min:0',
+            'is_margin_trading' => 'nullable|boolean',
+            'max_leverage' => 'nullable|integer|min:1|max:1000',
         ], [
             'name.required' => __('index.name_required'),
             'name.string' => __('index.name_string'),
@@ -108,6 +146,14 @@ class SymbolController extends Controller
         $symbol->name = $request->name;
         $symbol->symbol = $request->symbol;
         $symbol->status = $request->status;
+        $symbol->category = $request->category;
+        $symbol->description = $request->description;
+        $symbol->base_currency = $request->base_currency;
+        $symbol->quote_currency = $request->quote_currency;
+        $symbol->tick_size = $request->tick_size ?? 0.00001;
+        $symbol->lot_size = $request->lot_size ?? 1.00;
+        $symbol->is_margin_trading = $request->has('is_margin_trading') ? true : false;
+        $symbol->max_leverage = $request->max_leverage ?? 1;
         $symbol->save();
 
         return response()->json(['message' => __('index.symbol_updated_successfully')]);
