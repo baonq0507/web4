@@ -96,6 +96,25 @@
                                                 <option value="band" {{ $user->status == 'band' ? 'selected' : '' }}>{{ __('index.band') }}</option>
                                             </select>
                                         </div>
+                                        <div class="form-group">
+                                            <label for="vip_level_id">VIP Level</label>
+                                            <select id="vip_level_id" name="vip_level_id" class="form-control">
+                                                <option value="">Không có VIP</option>
+                                                @foreach($vipLevels as $vipLevel)
+                                                    <option value="{{ $vipLevel->id }}" 
+                                                        {{ $user->vip_level_id == $vipLevel->id ? 'selected' : '' }}
+                                                        style="color: {{ $vipLevel->color }}">
+                                                        {{ $vipLevel->name }} (Yêu cầu: ${{ number_format($vipLevel->required_deposit, 0) }})
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            <small class="form-text text-muted">
+                                                Tổng nạp hiện tại: <strong class="text-success">${{ number_format($user->total_deposit, 2) }}</strong>
+                                                @if($user->vipLevel)
+                                                    | VIP hiện tại: <strong style="color: {{ $user->vipLevel->color }}">{{ $user->vipLevel->name }}</strong>
+                                                @endif
+                                            </small>
+                                        </div>
                                         <div class="form-group my-3">
                                             <label for="referral">{{ __('index.referral') }}</label>
                                             <div class="input-group">

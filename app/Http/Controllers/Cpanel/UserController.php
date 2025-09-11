@@ -105,7 +105,7 @@ class UserController extends Controller
 
     public function show($id)
     {
-        $user = User::with(['referrals', 'roles', 'transactions' => function($query) {
+        $user = User::with(['referrals', 'roles', 'vipLevel', 'transactions' => function($query) {
             $query->orderBy('created_at', 'desc');
             $query->limit(10);
         }, 'user_trade' => function($query) {
@@ -113,8 +113,9 @@ class UserController extends Controller
             $query->limit(10);
         }, 'banks', 'usdt'])->find($id);
         $roles = Role::all();
+        $vipLevels = \App\Models\VipLevel::orderBy('level', 'asc')->get();
 
-        return view('cpanel.user.show', compact('user', 'roles'));
+        return view('cpanel.user.show', compact('user', 'roles', 'vipLevels'));
     }
 
     public function changePassword(Request $request, $id)

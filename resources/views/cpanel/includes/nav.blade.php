@@ -38,6 +38,12 @@
                         <span class="nav-main-link-name">{{ __('index.customer') }}</span>
                     </a>
                 </li>
+                <li class="nav-main-item">
+                    <a class="nav-main-link {{ request()->is('admin/vip*') ? 'active' : '' }}" href="{{ route('cpanel.vip.index') }}">
+                        <i class="nav-main-link-icon fas fa-crown"></i>
+                        <span class="nav-main-link-name">VIP Management</span>
+                    </a>
+                </li>
                 @endif
                 @if (auth()->user()->roles->first()->name == 'admin')
                 <li class="nav-main-item">
