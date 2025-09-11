@@ -96,6 +96,21 @@
                                                 <option value="band" {{ $user->status == 'band' ? 'selected' : '' }}>{{ __('index.band') }}</option>
                                             </select>
                                         </div>
+                                        
+                                        <!-- VIP Level Display -->
+                                        <div class="form-group">
+                                            <label>VIP Level hiện tại</label>
+                                            <div class="d-flex align-items-center">
+                                                @if($user->vipLevel)
+                                                    <span class="badge badge-lg mr-2" style="background-color: {{ $user->vipLevel->color }}; color: white; font-size: 14px;">
+                                                        {{ $user->vipLevel->name }}
+                                                    </span>
+                                                    <span class="text-muted">{{ $user->vipLevel->display_name }}</span>
+                                                @else
+                                                    <span class="text-muted">Chưa có VIP Level</span>
+                                                @endif
+                                            </div>
+                                        </div>
                                         <div class="form-group my-3">
                                             <label for="referral">{{ __('index.referral') }}</label>
                                             <div class="input-group">
@@ -362,6 +377,104 @@
                         </div>
                     </div>
                 </div>
+                
+                <!-- VIP Level Management Block -->
+                <div class="block block-rounded">
+                    <div class="block-header block-header-default">
+                        <h3 class="block-title">Quản lý VIP Level</h3>
+                    </div>
+                    <div class="block-content">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <form id="form-update-vip-level" action="{{ route('cpanel.user.update-vip-level', $user->id) }}" method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    
+                                    <div class="form-group">
+                                        <label for="total_deposit">Tổng nạp tiền ($)</label>
+                                        <input type="number" step="0.01" class="form-control" id="total_deposit" name="total_deposit" 
+                                               value="{{ $user->total_deposit }}" min="0" required>
+                                        <small class="form-text text-muted">Cập nhật tổng số tiền đã nạp của người dùng</small>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="vip_level_id">VIP Level</label>
+                                        <select class="form-control" id="vip_level_id" name="vip_level_id">
+                                            <option value="">Tự động dựa trên tổng nạp tiền</option>
+                                            @foreach($vipLevels as $vipLevel)
+                                                <option value="{{ $vipLevel->id }}" 
+                                                        {{ $user->vip_level_id == $vipLevel->id ? 'selected' : '' }}>
+                                                    {{ $vipLevel->name }} - {{ $vipLevel->display_name }} 
+                                                    (≥ ${{ number_format($vipLevel->min_deposit, 0) }})
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <small class="form-text text-muted">Để trống để tự động gán VIP level dựa trên tổng nạp tiền</small>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fa fa-save"></i> Cập nhật VIP Level
+                                    </button>
+                                </form>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="alert alert-info">
+                                    <h5><i class="fa fa-info-circle"></i> Thông tin VIP</h5>
+                                    <p><strong>VIP Level hiện tại:</strong> 
+                                        @if($user->vipLevel)
+                                            <span class="badge badge-lg" style="background-color: {{ $user->vipLevel->color }}; color: white;">
+                                                {{ $user->vipLevel->name }}
+                                            </span>
+                                            {{ $user->vipLevel->display_name }}
+                                        @else
+                                            <span class="text-muted">Chưa có</span>
+                                        @endif
+                                    </p>
+                                    <p><strong>Tổng nạp tiền:</strong> ${{ number_format($user->total_deposit, 2) }}</p>
+                                    
+                                    @if($user->vipLevel && $user->vipLevel->benefits_list)
+                                    <p><strong>Quyền lợi hiện tại:</strong></p>
+                                    <ul class="mb-0">
+                                        @foreach($user->vipLevel->benefits_list as $benefit)
+                                        <li>{{ $benefit }}</li>
+                                        @endforeach
+                                    </ul>
+                                    @endif
+                                </div>
+                                
+                                <!-- VIP Levels Preview -->
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">Các cấp VIP</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        @foreach($vipLevels as $vipLevel)
+                                        <div class="d-flex align-items-center mb-2 {{ $user->vip_level_id == $vipLevel->id ? 'bg-light p-2 rounded' : '' }}">
+                                            <span class="badge mr-2" style="background-color: {{ $vipLevel->color }}; color: white;">
+                                                {{ $vipLevel->name }}
+                                            </span>
+                                            <div>
+                                                <strong>{{ $vipLevel->display_name }}</strong>
+                                                <br>
+                                                <small class="text-muted">
+                                                    ≥ ${{ number_format($vipLevel->min_deposit, 0) }}
+                                                    @if($vipLevel->max_deposit)
+                                                        - ${{ number_format($vipLevel->max_deposit, 0) }}
+                                                    @endif
+                                                </small>
+                                            </div>
+                                            @if($user->vip_level_id == $vipLevel->id)
+                                            <span class="badge badge-success ml-auto">Hiện tại</span>
+                                            @endif
+                                        </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
@@ -400,6 +513,39 @@
                     },
                     complete: function () {
                         console.log('complete');
+                        $('.loading').hide();
+                    }
+                });
+            });
+
+            // VIP Level Update Form
+            $('#form-update-vip-level').submit(function (e) {
+                e.preventDefault();
+                var formData = $(this).serialize();
+                $('.loading').show();
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+                        console.log(response);
+                        Swal.fire({
+                            title: "{{ __('index.success') }}",
+                            text: response.message,
+                            icon: 'success'
+                        }).then(function() {
+                            location.reload(); // Reload to show updated VIP info
+                        });
+                    },
+                    error: function (response) {
+                        console.log(response);
+                        Swal.fire({
+                            title: "{{ __('index.error') }}",
+                            text: response.responseJSON.message,
+                            icon: 'error'
+                        });
+                    },
+                    complete: function () {
                         $('.loading').hide();
                     }
                 });

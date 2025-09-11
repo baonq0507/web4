@@ -44,6 +44,7 @@ class DatabaseSeeder extends Seeder
             TransactionSeeder::class,
             TimeSessionSeeder::class,
             WalletSeeder::class,
+            VipLevelSeeder::class,
             // SessionGameSeeder::class,
         ]);
     }

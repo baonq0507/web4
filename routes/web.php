@@ -28,6 +28,8 @@ use App\Http\Controllers\TradingStrategyController;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\TransferController;
 use App\Http\Controllers\Cpanel\TransferController as CpanelTransferController;
+use App\Http\Controllers\VipController;
+use App\Http\Controllers\Admin\VipController as AdminVipController;
 Route::middleware('language')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -79,6 +81,11 @@ Route::middleware('language')->group(function () {
         Route::post('/transfer/execute', [TransferController::class, 'transfer'])->name('transfer.execute');
         Route::get('/transfer/history', [TransferController::class, 'getTransferHistory'])->name('transfer.history');
         Route::get('/transfer/balances', [TransferController::class, 'getBalances'])->name('transfer.balances');
+        
+        // VIP Routes
+        Route::get('/vip', [VipController::class, 'index'])->name('vip.index');
+        Route::get('/vip/{id}', [VipController::class, 'show'])->name('vip.show');
+        Route::post('/vip/receive-reward/{id}', [VipController::class, 'receiveReward'])->name('vip.receive-reward');
     });
     Route::get('/trading', [HomeController::class, 'trading'])->name('trading');
     Route::get('/projects', [HomeController::class, 'projects'])->name('projects');
@@ -161,6 +168,7 @@ Route::middleware('languageAdmin')->group(function () {
                 Route::post('/user/unblock-withdraw/{user}', [UserController::class, 'unblockWithdraw'])->name('user.unblock-withdraw')->middleware('can:edit_user');
                 Route::put('/user/update-balance/{user}', [UserController::class, 'updateBalance'])->name('user.update-balance')->middleware('can:edit_user');
                 Route::put('/user/update-ratio/{user}', [UserController::class, 'updateRatio'])->name('user.update-ratio')->middleware('can:edit_user');
+                Route::put('/user/update-vip-level/{user}', [UserController::class, 'updateVipLevel'])->name('user.update-vip-level')->middleware('can:edit_user');
                 Route::get('/employee', [UserController::class, 'employee'])->name('employee');
                 Route::put('/user/password/update-withdraw/{user}', [CpanelController::class, 'updatePasswordWithdraw'])->name('user.password.update-withdraw')->middleware('can:edit_user');
             });
@@ -246,6 +254,20 @@ Route::middleware('languageAdmin')->group(function () {
                 Route::get('/transfers', [CpanelTransferController::class, 'index'])->name('transfers.index');
                 Route::get('/transfers/{id}', [CpanelTransferController::class, 'show'])->name('transfers.show');
                 Route::get('/transfers/export', [CpanelTransferController::class, 'export'])->name('transfers.export');
+            });
+            
+            // Admin VIP Management Routes
+            Route::prefix('vip')->name('vip.')->group(function () {
+                Route::get('/', [AdminVipController::class, 'index'])->name('index');
+                Route::get('/create', [AdminVipController::class, 'create'])->name('create');
+                Route::post('/', [AdminVipController::class, 'store'])->name('store');
+                Route::get('/{vipLevel}', [AdminVipController::class, 'show'])->name('show');
+                Route::get('/{vipLevel}/edit', [AdminVipController::class, 'edit'])->name('edit');
+                Route::put('/{vipLevel}', [AdminVipController::class, 'update'])->name('update');
+                Route::delete('/{vipLevel}', [AdminVipController::class, 'destroy'])->name('destroy');
+                Route::patch('/{vipLevel}/toggle', [AdminVipController::class, 'toggle'])->name('toggle');
+                Route::post('/update-all', [AdminVipController::class, 'updateAllUserVipLevels'])->name('update-all');
+                Route::get('/statistics', [AdminVipController::class, 'statistics'])->name('statistics');
             });
         });
     });
