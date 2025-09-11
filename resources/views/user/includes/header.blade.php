@@ -318,6 +318,10 @@
                         <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">Invitation</span>
                     </a>
                     @endif
+                    <a href="{{ route('vip.index') }}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
+                        <i class="fa fa-crown text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
+                        <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">VIP Welfare</span>
+                    </a>
                     <a href="#" id="languageBtn1" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-cyan-500/10 transition-colors duration-300 group">
                         <i class="fa fa-globe text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
                         <span class="text-white group-hover:text-cyan-300 transition-colors duration-300">{{ __('index.language') }}</span>

@@ -41,6 +41,8 @@ class User extends Authenticatable
         'region',
         'ratio',
         'ip_address',
+        'vip_level_id',
+        'total_deposit',
     ];
 
     /**
@@ -256,5 +258,36 @@ class User extends Authenticatable
         }
         
         return $totalAssets;
+    }
+
+    // VIP Level relationship
+    public function vipLevel()
+    {
+        return $this->belongsTo(VipLevel::class);
+    }
+
+    // Get current VIP level based on total deposits
+    public function getCurrentVipLevel()
+    {
+        return VipLevel::getVipLevelByDeposit($this->total_deposit);
+    }
+
+    // Update VIP level based on total deposits
+    public function updateVipLevel()
+    {
+        $newVipLevel = $this->getCurrentVipLevel();
+        if ($newVipLevel && $this->vip_level_id !== $newVipLevel->id) {
+            $this->update(['vip_level_id' => $newVipLevel->id]);
+        }
+    }
+
+    // Check if user qualifies for a specific VIP level
+    public function qualifiesForVipLevel($vipLevelId)
+    {
+        $vipLevel = VipLevel::find($vipLevelId);
+        if (!$vipLevel) return false;
+
+        return $this->total_deposit >= $vipLevel->min_deposit && 
+               ($vipLevel->max_deposit === null || $this->total_deposit <= $vipLevel->max_deposit);
     }
 }

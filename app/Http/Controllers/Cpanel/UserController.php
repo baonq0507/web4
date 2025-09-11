@@ -11,6 +11,7 @@ use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Pusher\Pusher;
 use Illuminate\Support\Facades\DB;
+use App\Models\VipLevel;
 
 class UserController extends Controller
 {
@@ -105,7 +106,7 @@ class UserController extends Controller
 
     public function show($id)
     {
-        $user = User::with(['referrals', 'roles', 'transactions' => function($query) {
+        $user = User::with(['referrals', 'roles', 'vipLevel', 'transactions' => function($query) {
             $query->orderBy('created_at', 'desc');
             $query->limit(10);
         }, 'user_trade' => function($query) {
@@ -113,8 +114,9 @@ class UserController extends Controller
             $query->limit(10);
         }, 'banks', 'usdt'])->find($id);
         $roles = Role::all();
+        $vipLevels = VipLevel::active()->ordered()->get();
 
-        return view('cpanel.user.show', compact('user', 'roles'));
+        return view('cpanel.user.show', compact('user', 'roles', 'vipLevels'));
     }
 
     public function changePassword(Request $request, $id)
@@ -236,5 +238,36 @@ class UserController extends Controller
             $query->orWhere('name','NHÂN VIÊN');
         })->get();
         return view('cpanel.user.employee', compact('users'));
+    }
+
+    public function updateVipLevel(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'vip_level_id' => 'nullable|exists:vip_levels,id',
+            'total_deposit' => 'required|numeric|min:0',
+        ], [
+            'vip_level_id.exists' => 'VIP Level không tồn tại',
+            'total_deposit.required' => 'Tổng nạp tiền là bắt buộc',
+            'total_deposit.numeric' => 'Tổng nạp tiền phải là số',
+            'total_deposit.min' => 'Tổng nạp tiền phải lớn hơn hoặc bằng 0',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors()->first()], 422);
+        }
+
+        $user = User::find($id);
+        $user->total_deposit = $request->total_deposit;
+        
+        if ($request->vip_level_id) {
+            $user->vip_level_id = $request->vip_level_id;
+        } else {
+            // Auto assign VIP level based on total deposit
+            $user->updateVipLevel();
+        }
+        
+        $user->save();
+
+        return response()->json(['message' => 'VIP Level đã được cập nhật thành công'], 200);
     }
 }
