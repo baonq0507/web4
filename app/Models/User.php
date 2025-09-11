@@ -36,6 +36,7 @@ class User extends Authenticatable
         'referral',
         'referral_parent_id',
         'level',
+        'vip_level_id',
         'wallet_address',
         'balance_usdt',
         'region',
@@ -256,5 +257,79 @@ class User extends Authenticatable
         }
         
         return $totalAssets;
+    }
+
+    /**
+     * Relationship với VIP Level
+     */
+    public function vipLevel()
+    {
+        return $this->belongsTo(VipLevel::class);
+    }
+
+    /**
+     * Lấy VIP level hiện tại hoặc mặc định
+     */
+    public function getCurrentVipLevel()
+    {
+        if ($this->vipLevel) {
+            return $this->vipLevel;
+        }
+        
+        // Nếu chưa có VIP level, tự động cập nhật dựa trên tổng nạp tiền
+        return $this->updateVipLevel();
+    }
+
+    /**
+     * Cập nhật VIP level dựa trên tổng số tiền nạp
+     */
+    public function updateVipLevel()
+    {
+        $totalDeposit = $this->getTotalDepositAttribute();
+        $newVipLevel = VipLevel::getVipLevelByDeposit($totalDeposit);
+        
+        if ($newVipLevel && (!$this->vipLevel || $this->vipLevel->level < $newVipLevel->level)) {
+            $this->vip_level_id = $newVipLevel->id;
+            $this->save();
+        }
+        
+        return $this->vipLevel ?? VipLevel::where('level', 0)->first();
+    }
+
+    /**
+     * Kiểm tra xem có thể nâng cấp VIP không
+     */
+    public function canUpgradeVip()
+    {
+        $currentLevel = $this->getCurrentVipLevel();
+        if (!$currentLevel || $currentLevel->isMaxLevel()) {
+            return false;
+        }
+        
+        $nextLevel = $currentLevel->getNextLevel();
+        if (!$nextLevel) {
+            return false;
+        }
+        
+        return $this->getTotalDepositAttribute() >= $nextLevel->required_deposit;
+    }
+
+    /**
+     * Lấy tiền cần nạp thêm để lên VIP tiếp theo
+     */
+    public function getAmountNeededForNextVip()
+    {
+        $currentLevel = $this->getCurrentVipLevel();
+        if (!$currentLevel || $currentLevel->isMaxLevel()) {
+            return 0;
+        }
+        
+        $nextLevel = $currentLevel->getNextLevel();
+        if (!$nextLevel) {
+            return 0;
+        }
+        
+        $needed = $nextLevel->required_deposit - $this->getTotalDepositAttribute();
+        return max(0, $needed);
     }
 }

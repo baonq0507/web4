@@ -118,6 +118,13 @@
                             <div class="text-xs text-gray-400">Tin tức và sự kiện crypto nổi bật</div>
                         </div>
                     </a>
+                    <a href="{{ route('vip') }}" class="flex items-start space-x-2 px-4 py-2 text-sm hover:bg-gray-800 transition-colors duration-300">
+                        <i class="fa fa-crown text-yellow-400 mt-1"></i>
+                        <div>
+                            <span class="font-medium">VIP Center</span>
+                            <div class="text-xs text-gray-400">Trải nghiệm đẳng cấp với đặc quyền VIP</div>
+                        </div>
+                    </a>
                     <a href="/" class="flex items-start space-x-2 px-4 py-2 text-sm hover:bg-gray-800 transition-colors duration-300">
                         <i class="fa fa-bank text-cyan-400 mt-1"></i>
                         <div>

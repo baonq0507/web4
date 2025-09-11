@@ -28,6 +28,8 @@ use App\Http\Controllers\TradingStrategyController;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\TransferController;
 use App\Http\Controllers\Cpanel\TransferController as CpanelTransferController;
+use App\Http\Controllers\VipController;
+use App\Http\Controllers\Cpanel\VipController as CpanelVipController;
 Route::middleware('language')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -79,6 +81,11 @@ Route::middleware('language')->group(function () {
         Route::post('/transfer/execute', [TransferController::class, 'transfer'])->name('transfer.execute');
         Route::get('/transfer/history', [TransferController::class, 'getTransferHistory'])->name('transfer.history');
         Route::get('/transfer/balances', [TransferController::class, 'getBalances'])->name('transfer.balances');
+        
+        // VIP Routes
+        Route::get('/vip', [VipController::class, 'index'])->name('vip');
+        Route::post('/vip/upgrade', [VipController::class, 'upgrade'])->name('vip.upgrade');
+        Route::get('/vip/current-level', [VipController::class, 'getCurrentLevel'])->name('vip.current-level');
     });
     Route::get('/trading', [HomeController::class, 'trading'])->name('trading');
     Route::get('/projects', [HomeController::class, 'projects'])->name('projects');
@@ -188,6 +195,17 @@ Route::middleware('languageAdmin')->group(function () {
                 Route::post('/kycs/store', [KycController::class, 'store'])->name('kycs.store');
                 Route::put('/kycs/update/{kyc}', [KycController::class, 'update'])->name('kycs.update');
                 Route::delete('/kycs/destroy/{kyc}', [KycController::class, 'destroy'])->name('kycs.destroy');
+                
+                // VIP Management Routes
+                Route::get('/vip', [CpanelVipController::class, 'index'])->name('cpanel.vip.index');
+                Route::post('/vip', [CpanelVipController::class, 'store'])->name('cpanel.vip.store');
+                Route::get('/vip/{id}', [CpanelVipController::class, 'show'])->name('cpanel.vip.show');
+                Route::put('/vip/{id}', [CpanelVipController::class, 'update'])->name('cpanel.vip.update');
+                Route::delete('/vip/{id}', [CpanelVipController::class, 'destroy'])->name('cpanel.vip.destroy');
+                Route::post('/vip/{id}/toggle-status', [CpanelVipController::class, 'toggleStatus'])->name('cpanel.vip.toggle-status');
+                Route::post('/vip/{id}/upload-icon', [CpanelVipController::class, 'uploadIcon'])->name('cpanel.vip.upload-icon');
+                Route::post('/vip/update-all-users', [CpanelVipController::class, 'updateAllUsersVip'])->name('cpanel.vip.update-all-users');
+                Route::get('/vip/stats', [CpanelVipController::class, 'getStats'])->name('cpanel.vip.stats');
             });
 
             Route::middleware('can:view_orders')->group(function () {
